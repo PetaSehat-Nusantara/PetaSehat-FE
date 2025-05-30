@@ -28,7 +28,7 @@ jobs:
           docker build \
             --build-arg NEXT_PUBLIC_FIREBASE_API_KEY=${{ secrets.NEXT_PUBLIC_FIREBASE_API_KEY }} \
             --build-arg NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=${{ secrets.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN }} \
-            --build-arg NEXT_PUBLIC_FIREBASE_PROJECT_ID_PUBLIC=${{ secrets.NEXT_PUBLIC_FIREBASE_PROJECT_ID }} \
+            --build-arg NEXT_PUBLIC_FIREBASE_PROJECT_ID=${{ secrets.NEXT_PUBLIC_FIREBASE_PROJECT_ID }} \
             --build-arg NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=${{ secrets.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET }} \
             --build-arg NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=${{ secrets.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID }} \
             --build-arg NEXT_PUBLIC_FIREBASE_APP_ID=${{ secrets.NEXT_PUBLIC_FIREBASE_APP_ID }} \
@@ -84,18 +84,18 @@ jobs:
               -e FIREBASE_PRIVATE_KEY="$FIREBASE_PRIVATE_KEY" \
               gcr.io/$GCP_PROJECT_ID/next-app:latest
 
-            # Buat file Caddyfile untuk konfigurasi domain dan reverse proxy
+            # Create Caddyfile with domain config
             cat > ~/Caddyfile << 'CADDYEOF'
-                www.petasehat.site, petasehat.site {
-                    reverse_proxy localhost:3000
-                    encode gzip
-                }
-            CADDYEOF
+www.petasehat.site, petasehat.site {
+    reverse_proxy localhost:3000
+    encode gzip
+}
+CADDYEOF
 
-            # Hentikan dan hapus container Caddy lama jika ada
+            # Stop and remove old Caddy container
             docker rm -f caddy || true
 
-            # Jalankan container Caddy dengan mount konfigurasi dan volume untuk sertifikat
+            # Run Caddy container with mounted volumes for certs and config
             docker run -d --name caddy -p 80:80 -p 443:443 \
               -v ~/Caddyfile:/etc/caddy/Caddyfile \
               -v caddy_data:/data \
