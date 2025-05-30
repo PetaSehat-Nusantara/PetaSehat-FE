@@ -113,41 +113,42 @@ function AppNavbarWithSidebar() {
   );
 }
 
-// Navbar untuk user yang belum login (tanpa sidebar context)
 function AppNavbarWithoutSidebar() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   return (
-    <header className="flex h-16 w-full shrink-0 items-center justify-between border-b border-ocean-100 bg-white/90 backdrop-blur-md px-4 md:px-6 sticky top-0 z-50 transition-all duration-300 hover:bg-white/95 hover:shadow-lg">
-      <div className="flex items-center gap-4">
-        <Link href="/" className="flex items-center gap-2 group">
-          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-ocean-grass-gradient shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
-            <span className="text-sm font-bold text-white">P</span>
-          </div>
-          <span className="text-lg font-semibold bg-gradient-to-r from-ocean-600 to-grass-600 bg-clip-text text-transparent group-hover:from-ocean-700 group-hover:to-grass-700 transition-all duration-300">
-            PetaSehat
-          </span>
-        </Link>
-      </div>
+    <>
+      <header className="flex h-16 w-full shrink-0 items-center justify-between border-b border-ocean-100 bg-white/90 backdrop-blur-md px-4 md:px-6 sticky top-0 z-50 transition-all duration-300 hover:bg-white/95 hover:shadow-lg">
+        <div className="flex items-center gap-4">
+          <Link href="/" className="flex items-center gap-2 group">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-ocean-grass-gradient shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
+              <span className="text-sm font-bold text-white">P</span>
+            </div>
+            <span className="text-lg font-semibold bg-gradient-to-r from-ocean-600 to-grass-600 bg-clip-text text-transparent group-hover:from-ocean-700 group-hover:to-grass-700 transition-all duration-300">
+              PetaSehat
+            </span>
+          </Link>
+        </div>
 
-      <div className="flex items-center gap-2">
-        <Button
-          onClick={() => setIsLoginModalOpen(true)}
-          className="flex items-center gap-2 bg-gradient-to-r from-green-300 to-blue-300 hover:shadow-lg hover:shadow-blue-200/50 text-white hover:scale-105 transition-all duration-300"
-        >
-          <LogIn className="h-4 w-4" />
-          <span className="hidden md:inline">Login</span>
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            onClick={() => setIsLoginModalOpen(true)}
+            className="flex items-center gap-2 bg-gradient-to-r from-green-300 to-blue-300 hover:shadow-lg hover:shadow-blue-200/50 text-white hover:scale-105 transition-all duration-300"
+          >
+            <LogIn className="h-4 w-4" />
+            <span className="hidden md:inline">Login</span>
+          </Button>
+        </div>
+      </header>
 
-        <LoginModal
-          isOpen={isLoginModalOpen}
-          onClose={() => setIsLoginModalOpen(false)}
-        />
-      </div>
-    </header>
+      {/* Modal rendered at the document body level */}
+      <LoginModal
+        isOpen={isLoginModalOpen}
+        onClose={() => setIsLoginModalOpen(false)}
+      />
+    </>
   );
 }
-
 // Sidebar Component
 export function AppSidebar() {
   const menuItems = [

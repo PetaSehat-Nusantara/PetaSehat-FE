@@ -93,15 +93,12 @@ jobs:
                     path /_next/static/*
                     path /public/*
                 }
-            }" | sudo -n tee /etc/caddy/sites-available/frontend.caddy > /dev/null
-
-            # Create symlink if it doesn't exist
-            sudo -n ln -sf /etc/caddy/sites-available/frontend.caddy /etc/caddy/sites-enabled/
+            }" | sudo -n tee /etc/caddy/Caddyfile > /dev/null
 
             # Reload Caddy to apply the new configuration
             sudo -n systemctl reload caddy || sudo -n caddy reload
 
-            # Stop and remove old Caddy container
+            # Stop and remove old Caddy container if any
             docker rm -f caddy || true
 
             # Run Caddy container with mounted volumes for certs and config
