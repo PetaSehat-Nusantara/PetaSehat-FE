@@ -13,7 +13,8 @@ type Message = {
   id: string
   content: string
   role: "user" | "assistant"
-  timestamp: Date
+  timestamp: string // ISO string, NOT Date
+  isError?: boolean
 }
 
 type NusaInfoModuleProps = {
@@ -24,7 +25,7 @@ type NusaInfoModuleProps = {
 }
 
 const NusaInfoModule = ({
-  initialPrompt = "NusaInfo kami menyediakan fasilitas kesehatan di Jawa Timur. Silahkan ketikkan nama rumah sakit yang ingin dicari.",
+  initialPrompt = "NusaInfo kami menyediakan informasi terkait infrastruktur kesehatan, sebutkan apa yang bisa saya bantu :)",
   className,
   title = "NusaInfo",
   subtitle = "AI Assistant",
@@ -34,7 +35,7 @@ const NusaInfoModule = ({
       id: "welcome-message",
       content: initialPrompt,
       role: "assistant",
-      timestamp: new Date(),
+      timestamp: new Date().toISOString(),
     },
   ])
   const [input, setInput] = useState("")
@@ -60,11 +61,12 @@ const NusaInfoModule = ({
 
     if (!input.trim() || isLoading) return
 
+    const now = new Date().toISOString()
     const userMessage: Message = {
       id: `user-${Date.now()}`,
       content: input,
       role: "user",
-      timestamp: new Date(),
+      timestamp: now,
     }
 
     setMessages((prev) => [...prev, userMessage])
@@ -72,26 +74,30 @@ const NusaInfoModule = ({
     setIsLoading(true)
 
     try {
-      // Here we would integrate with Vertex AI
-      // This is a placeholder for the actual API call
       const response = await callVertexAI(input)
 
       const assistantMessage: Message = {
         id: `assistant-${Date.now()}`,
         content: response,
         role: "assistant",
-        timestamp: new Date(),
+        timestamp: new Date().toISOString(),
       }
 
       setMessages((prev) => [...prev, assistantMessage])
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Error fetching response from Vertex AI:", error)
+
+      let errorMessageText = "Maaf, terjadi kesalahan tak terduga."
+      if (error instanceof Error) {
+        errorMessageText = error.message || errorMessageText
+      }
 
       const errorMessage: Message = {
         id: `error-${Date.now()}`,
-        content: "Maaf, terjadi kesalahan saat memproses permintaan Anda. Silakan coba lagi nanti.",
+        content: errorMessageText,
         role: "assistant",
-        timestamp: new Date(),
+        timestamp: new Date().toISOString(),
+        isError: true,
       }
 
       setMessages((prev) => [...prev, errorMessage])
@@ -100,25 +106,7 @@ const NusaInfoModule = ({
     }
   }
 
-  // Mock function to simulate Vertex AI response
-  // This would be replaced with actual Vertex AI integration
-  // const mockVertexAIRequest = async (prompt: string): Promise<string> => {
-  //   // Simulate network delay
-  //   await new Promise((resolve) => setTimeout(resolve, 1000))
-
-  //   // Simple response logic based on prompt keywords
-  //   if (prompt.toLowerCase().includes("halo") || prompt.toLowerCase().includes("hai")) {
-  //     return "Halo! Ada yang bisa saya bantu terkait layanan kesehatan PetaSehat?"
-  //   } else if (prompt.toLowerCase().includes("rumah sakit") || prompt.toLowerCase().includes("rs")) {
-  //     return "PetaSehat memiliki informasi tentang berbagai rumah sakit di Indonesia. Anda dapat mencari rumah sakit terdekat melalui fitur NusaCari."
-  //   } else if (prompt.toLowerCase().includes("dokter")) {
-  //     return "Anda dapat menemukan informasi dokter spesialis melalui fitur NusaCari. Kami memiliki data lengkap tentang dokter di berbagai rumah sakit."
-  //   } else {
-  //     return "Terima kasih atas pertanyaan Anda. Sebagai asisten AI PetaSehat, saya dapat membantu Anda dengan informasi kesehatan, rumah sakit, dokter, dan layanan kesehatan lainnya. Silakan tanyakan lebih spesifik."
-  //   }
-  // }
-
-  // Function to implement actual Vertex AI integration
+  // Function to call Vertex AI API
   const callVertexAI = async (prompt: string): Promise<string> => {
     try {
       const response = await fetch("/api/vertex-ai", {
@@ -129,15 +117,19 @@ const NusaInfoModule = ({
         body: JSON.stringify({ prompt }),
       })
 
+      const data = await response.json()
+
       if (!response.ok) {
-        throw new Error("Failed to fetch from Vertex AI")
+        throw new Error(data.error || "Terjadi kesalahan tak terduga.")
       }
 
-      const data = await response.json()
       return data.response
-    } catch (error) {
-      console.error("Error calling Vertex AI:", error)
-      throw error
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        throw new Error(error.message || "Terjadi kesalahan tak terduga.")
+      } else {
+        throw new Error("Terjadi kesalahan tak terduga.")
+      }
     }
   }
 
@@ -205,20 +197,29 @@ const NusaInfoModule = ({
                       "p-3 rounded-xl text-sm transition-all duration-300 hover:shadow-md relative overflow-hidden",
                       message.role === "user"
                         ? "bg-gradient-to-r from-emerald-200 to-blue-200 ml-auto max-w-[85%] rounded-tr-none"
+                        : message.isError
+                        ? "bg-gradient-to-r from-red-100 to-red-200 border border-red-400 text-red-700 mr-auto max-w-[90%] rounded-tl-none"
                         : "bg-gradient-to-r from-slate-100 to-slate-200 mr-auto max-w-[90%] rounded-tl-none border border-emerald-300/40",
                     )}
                   >
                     {/* Background animation for assistant messages */}
-                    {message.role === "assistant" && (
+                    {message.role === "assistant" && !message.isError && (
                       <div className="absolute inset-0 bg-gradient-to-r from-emerald-200/30 to-blue-200/30 opacity-0 hover:opacity-100 transition-opacity duration-300" />
                     )}
                     <span
-                      className={cn("relative z-10", message.role === "user" ? "text-slate-800" : "text-slate-700")}
+                      className={cn(
+                        "relative z-10",
+                        message.role === "user"
+                          ? "text-slate-800"
+                          : message.isError
+                          ? "text-red-700 font-semibold"
+                          : "text-slate-700"
+                      )}
                     >
                       {message.content}
                     </span>
                     <span className="text-[10px] text-slate-500 mt-2 block text-right relative z-10">
-                      {message.timestamp.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                      {new Date(message.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                     </span>
                   </div>
                 </div>

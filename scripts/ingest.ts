@@ -1,6 +1,6 @@
 import fs from 'fs';
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
-import { getPineconeVectorStore } from '../lib/vector-store';
+import { getPineconeVectorStore } from '../src/lib/vector-store';
 
 async function run() {
   const rawText = fs.readFileSync('data/regulasi_kesehatan.txt', 'utf-8');
