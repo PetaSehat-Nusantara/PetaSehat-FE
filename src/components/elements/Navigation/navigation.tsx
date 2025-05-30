@@ -132,12 +132,12 @@ function AppNavbarWithoutSidebar() {
 
         <div className="flex items-center gap-2">
           <Button
-            onClick={() => setIsLoginModalOpen(true)}
-            className="flex items-center gap-2 bg-gradient-to-r from-green-300 to-blue-300 hover:shadow-lg hover:shadow-blue-200/50 text-white hover:scale-105 transition-all duration-300"
-          >
-            <LogIn className="h-4 w-4" />
-            <span className="hidden md:inline">Login</span>
-          </Button>
+          onClick={() => setIsLoginModalOpen(true)}
+          className="flex items-center gap-2 bg-gradient-to-r from-green-400 to-blue-400 hover:shadow-lg hover:shadow-blue-200/50 text-white hover:scale-105 transition-all duration-300"
+        >
+          <LogIn className="h-4 w-4" />
+          <span className="hidden md:inline">Login</span>
+        </Button>
         </div>
       </header>
 
@@ -149,6 +149,7 @@ function AppNavbarWithoutSidebar() {
     </>
   );
 }
+
 // Sidebar Component
 export function AppSidebar() {
   const menuItems = [
