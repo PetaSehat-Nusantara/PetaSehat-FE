@@ -46,7 +46,7 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.GCP_VM_HOST }} >> ~/.ssh/known_hosts
 
-      - name: Deploy Docker container on GCP VM
+      - name: Deploy Docker container and Caddy on GCP VM
         env:
           NEXT_PUBLIC_FIREBASE_API_KEY: ${{ secrets.NEXT_PUBLIC_FIREBASE_API_KEY }}
           NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: ${{ secrets.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN }}
@@ -64,8 +64,13 @@ jobs:
 
         run: |
           ssh -o StrictHostKeyChecking=no $GCP_VM_USER@$GCP_VM_HOST bash << EOF
+            # Pull latest Next.js image
             docker pull gcr.io/$GCP_PROJECT_ID/next-app:latest
+
+            # Remove existing Next.js container
             docker rm -f next-app || true
+
+            # Run Next.js container
             docker run -d --name next-app -p 3000:3000 \
               -e NEXT_PUBLIC_FIREBASE_API_KEY="$NEXT_PUBLIC_FIREBASE_API_KEY" \
               -e NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN="$NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN" \
@@ -78,4 +83,22 @@ jobs:
               -e FIREBASE_CLIENT_EMAIL="$FIREBASE_CLIENT_EMAIL" \
               -e FIREBASE_PRIVATE_KEY="$FIREBASE_PRIVATE_KEY" \
               gcr.io/$GCP_PROJECT_ID/next-app:latest
+
+            # Buat file Caddyfile untuk konfigurasi domain dan reverse proxy
+            cat > ~/Caddyfile << 'CADDYEOF'
+                www.petasehat.site, petasehat.site {
+                    reverse_proxy localhost:3000
+                    encode gzip
+                }
+            CADDYEOF
+
+            # Hentikan dan hapus container Caddy lama jika ada
+            docker rm -f caddy || true
+
+            # Jalankan container Caddy dengan mount konfigurasi dan volume untuk sertifikat
+            docker run -d --name caddy -p 80:80 -p 443:443 \
+              -v ~/Caddyfile:/etc/caddy/Caddyfile \
+              -v caddy_data:/data \
+              -v caddy_config:/config \
+              caddy:latest
           EOF
