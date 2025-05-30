@@ -86,11 +86,11 @@ jobs:
 
             # Create Caddyfile with domain config
             cat > ~/Caddyfile << 'CADDYEOF'
-www.petasehat.site, petasehat.site {
-    reverse_proxy localhost:3000
-    encode gzip
-}
-CADDYEOF
+            www.petasehat.site, petasehat.site {
+                reverse_proxy localhost:3000
+                encode gzip
+            }
+            CADDYEOF
 
             # Stop and remove old Caddy container
             docker rm -f caddy || true
