@@ -85,12 +85,21 @@ jobs:
               gcr.io/$GCP_PROJECT_ID/next-app:latest
 
             # Create Caddyfile with domain config
-            cat > ~/Caddyfile << 'CADDYEOF'
-            www.petasehat.site, petasehat.site {
+            echo "www.petasehat.site, petasehat.site {
                 reverse_proxy localhost:3000
                 encode gzip
-            }
-            CADDYEOF
+
+                @static {
+                    path /_next/static/*
+                    path /public/*
+                }
+            }" | sudo -n tee /etc/caddy/sites-available/frontend.caddy > /dev/null
+
+            # Create symlink if it doesn't exist
+            sudo -n ln -sf /etc/caddy/sites-available/frontend.caddy /etc/caddy/sites-enabled/
+
+            # Reload Caddy to apply the new configuration
+            sudo -n systemctl reload caddy || sudo -n caddy reload
 
             # Stop and remove old Caddy container
             docker rm -f caddy || true
