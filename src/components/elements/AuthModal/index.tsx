@@ -39,11 +39,11 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
   return (
     <Portal>
-      <div className="fixed inset-0 bg-gradient-to-br from-slate-900/80 via-ocean-900/60 to-grass-900/80 backdrop-blur-sm flex items-center justify-center p-4 z-[9999]">
+      <div className="fixed inset-0 bg-gradient-to-br from-slate-900/80 via-blue-900/60 to-green-900/80 backdrop-blur-sm flex items-center justify-center p-4 z-[9999]">
         {/* Animated background elements */}
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-20 left-20 w-64 h-64 bg-grass-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse" />
-          <div className="absolute bottom-20 right-20 w-80 h-80 bg-ocean-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse delay-1000" />
+          <div className="absolute top-20 left-20 w-64 h-64 bg-green-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse" />
+          <div className="absolute bottom-20 right-20 w-80 h-80 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse delay-1000" />
         </div>
 
         <Card className="w-full max-w-5xl bg-white/95 backdrop-blur-lg rounded-3xl overflow-hidden relative shadow-2xl border-0 transform hover:scale-[1.02] transition-all duration-500">
@@ -61,7 +61,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
           <div className="flex min-h-[600px]">
             {/* Left side - Enhanced visual */}
-            <div className="hidden md:flex md:w-1/2 bg-ocean-grass-gradient relative overflow-hidden">
+            <div className="hidden md:flex md:w-1/2 bg-gradient-to-br from-green-500 to-blue-600 relative overflow-hidden">
               {/* Animated background patterns */}
               <div className="absolute inset-0">
                 <div className="absolute top-10 left-10 w-32 h-32 bg-white/10 rounded-full animate-pulse" />
@@ -95,10 +95,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 </div>
 
                 <div className="space-y-4">
-                  <h3 className="text-3xl font-bold bg-gradient-to-r from-white to-grass-100 bg-clip-text text-transparent hover:scale-105 transition-transform cursor-pointer">
+                  <h3 className="text-3xl font-bold text-white hover:scale-105 transition-transform cursor-pointer">
                     {mode === 'register' ? 'Create Account' : 'Welcome Back!'}
                   </h3>
-                  <p className="text-grass-100 text-lg leading-relaxed hover:text-white transition-colors cursor-pointer">
+                  <p className="text-green-100 text-lg leading-relaxed hover:text-white transition-colors cursor-pointer">
                     {mode === 'register'
                       ? 'Start your journey with us!'
                       : 'Continue your mission!'}
@@ -117,7 +117,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                     <>
                       {/* Enhanced Register Form */}
                       <div className="text-center space-y-4">
-                        <h2 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-grass-600 via-grass-500 to-grass-700 bg-clip-text text-transparent hover:from-grass-700 hover:to-grass-800 transition-all duration-500 cursor-pointer">
+                        <h2 className="text-3xl lg:text-4xl font-bold text-green-600 hover:text-green-700 transition-all duration-500 cursor-pointer">
                           Create Account
                         </h2>
                         <p className="text-slate-600 text-lg">
@@ -137,7 +137,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                             <Input
                               id="firstName"
                               placeholder="Your first name"
-                              className="border-2 border-grass-200 focus:border-grass-500 focus:ring-grass-500/20 rounded-xl py-3 transition-all duration-300 hover:border-grass-300 hover:shadow-md focus:shadow-lg"
+                              className="border-2 border-green-200 focus:border-green-500 focus:ring-green-500/20 rounded-xl py-3 transition-all duration-300 hover:border-green-300 hover:shadow-md focus:shadow-lg"
                             />
                           </div>
                           <div className="space-y-3">
@@ -150,7 +150,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                             <Input
                               id="lastName"
                               placeholder="Your last name"
-                              className="border-2 border-ocean-200 focus:border-ocean-500 focus:ring-ocean-500/20 rounded-xl py-3 transition-all duration-300 hover:border-ocean-300 hover:shadow-md focus:shadow-lg"
+                              className="border-2 border-blue-200 focus:border-blue-500 focus:ring-blue-500/20 rounded-xl py-3 transition-all duration-300 hover:border-blue-300 hover:shadow-md focus:shadow-lg"
                             />
                           </div>
                         </div>
@@ -166,7 +166,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                             id="email"
                             type="email"
                             placeholder="email@example.com"
-                            className="border-2 border-grass-200 focus:border-grass-500 focus:ring-grass-500/20 rounded-xl py-3 transition-all duration-300 hover:border-grass-300 hover:shadow-md focus:shadow-lg"
+                            className="border-2 border-green-200 focus:border-green-500 focus:ring-green-500/20 rounded-xl py-3 transition-all duration-300 hover:border-green-300 hover:shadow-md focus:shadow-lg"
                           />
                         </div>
 
@@ -182,7 +182,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                               id="password"
                               type={showPassword ? 'text' : 'password'}
                               placeholder="Enter a strong password"
-                              className="border-2 border-grass-200 focus:border-grass-500 focus:ring-grass-500/20 rounded-xl py-3 pr-12 transition-all duration-300 hover:border-grass-300 hover:shadow-md focus:shadow-lg"
+                              className="border-2 border-green-200 focus:border-green-500 focus:ring-green-500/20 rounded-xl py-3 pr-12 transition-all duration-300 hover:border-green-300 hover:shadow-md focus:shadow-lg"
                             />
                             <button
                               type="button"
@@ -190,7 +190,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                                 setShowPassword(!showPassword);
                                 handleClick('toggle-password');
                               }}
-                              className="absolute right-3 top-1/2 -translate-y-1/2 text-grass-400 hover:text-grass-600 p-1 rounded-lg hover:bg-grass-50 transition-all duration-300 hover:scale-110 active:scale-95"
+                              className="absolute right-3 top-1/2 -translate-y-1/2 text-green-400 hover:text-green-600 p-1 rounded-lg hover:bg-green-50 transition-all duration-300 hover:scale-110 active:scale-95"
                             >
                               {showPassword ? (
                                 <EyeOff
@@ -217,7 +217,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                               id="confirmPassword"
                               type={showConfirmPassword ? 'text' : 'password'}
                               placeholder="Confirm your password"
-                              className="border-2 border-ocean-200 focus:border-ocean-500 focus:ring-ocean-500/20 rounded-xl py-3 pr-12 transition-all duration-300 hover:border-ocean-300 hover:shadow-md focus:shadow-lg"
+                              className="border-2 border-blue-200 focus:border-blue-500 focus:ring-blue-500/20 rounded-xl py-3 pr-12 transition-all duration-300 hover:border-blue-300 hover:shadow-md focus:shadow-lg"
                             />
                             <button
                               type="button"
@@ -225,7 +225,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                                 setShowConfirmPassword(!showConfirmPassword);
                                 handleClick('toggle-confirm-password');
                               }}
-                              className="absolute right-3 top-1/2 -translate-y-1/2 text-ocean-400 hover:text-ocean-600 p-1 rounded-lg hover:bg-ocean-50 transition-all duration-300 hover:scale-110 active:scale-95"
+                              className="absolute right-3 top-1/2 -translate-y-1/2 text-blue-400 hover:text-blue-600 p-1 rounded-lg hover:bg-blue-50 transition-all duration-300 hover:scale-110 active:scale-95"
                             >
                               {showConfirmPassword ? (
                                 <EyeOff
@@ -241,7 +241,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                         </div>
 
                         <Button
-                          className="w-full bg-grass-gradient hover:shadow-grass-lg text-white py-4 rounded-xl text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 active:scale-95 group"
+                          className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white py-4 rounded-xl text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 active:scale-95 group"
                           onClick={() => handleClick('register-submit')}
                         >
                           <span>Register</span>
@@ -260,7 +260,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
                         <Button
                           variant="outline"
-                          className="w-full py-4 rounded-xl border-2 border-slate-200 hover:border-grass-300 hover:bg-grass-50 transition-all duration-300 transform hover:scale-105 active:scale-95 group"
+                          className="w-full py-4 rounded-xl border-2 border-slate-200 hover:border-green-300 hover:bg-green-50 transition-all duration-300 transform hover:scale-105 active:scale-95 group"
                           onClick={() => handleClick('google-register')}
                         >
                           <svg className="w-6 h-6 mr-3" viewBox="0 0 24 24">
@@ -295,7 +295,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                               toggleMode();
                               handleClick('switch-to-login');
                             }}
-                            className="text-grass-600 hover:text-grass-700 font-bold hover:underline transition-all duration-300 hover:scale-105 active:scale-95 inline-flex items-center gap-1"
+                            className="text-green-600 hover:text-green-700 font-bold hover:underline transition-all duration-300 hover:scale-105 active:scale-95 inline-flex items-center gap-1"
                           >
                             <span
                               className={
@@ -314,7 +314,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                     <>
                       {/* Enhanced Login Form */}
                       <div className="text-center space-y-4">
-                        <h2 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-ocean-600 via-ocean-500 to-ocean-700 bg-clip-text text-transparent hover:from-ocean-700 hover:to-ocean-800 transition-all duration-500 cursor-pointer">
+                        <h2 className="text-3xl lg:text-4xl font-bold text-blue-600 hover:text-blue-700 transition-all duration-500 cursor-pointer">
                           Login to Your Account
                         </h2>
                         <p className="text-slate-600 text-lg">Welcome back!</p>
@@ -332,7 +332,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                             id="loginEmail"
                             type="email"
                             placeholder="email@example.com"
-                            className="border-2 border-ocean-200 focus:border-ocean-500 focus:ring-ocean-500/20 rounded-xl py-4 transition-all duration-300 hover:border-ocean-300 hover:shadow-md focus:shadow-lg text-lg"
+                            className="border-2 border-blue-200 focus:border-blue-500 focus:ring-blue-500/20 rounded-xl py-4 transition-all duration-300 hover:border-blue-300 hover:shadow-md focus:shadow-lg text-lg"
                           />
                         </div>
 
@@ -348,7 +348,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                               id="loginPassword"
                               type={showPassword ? 'text' : 'password'}
                               placeholder="Enter your password"
-                              className="border-2 border-grass-200 focus:border-grass-500 focus:ring-grass-500/20 rounded-xl py-4 pr-12 transition-all duration-300 hover:border-grass-300 hover:shadow-md focus:shadow-lg text-lg"
+                              className="border-2 border-green-200 focus:border-green-500 focus:ring-green-500/20 rounded-xl py-4 pr-12 transition-all duration-300 hover:border-green-300 hover:shadow-md focus:shadow-lg text-lg"
                             />
                             <button
                               type="button"
@@ -356,7 +356,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                                 setShowPassword(!showPassword);
                                 handleClick('toggle-login-password');
                               }}
-                              className="absolute right-3 top-1/2 -translate-y-1/2 text-grass-400 hover:text-grass-600 p-1 rounded-lg hover:bg-grass-50 transition-all duration-300 hover:scale-110 active:scale-95"
+                              className="absolute right-3 top-1/2 -translate-y-1/2 text-green-400 hover:text-green-600 p-1 rounded-lg hover:bg-green-50 transition-all duration-300 hover:scale-110 active:scale-95"
                             >
                               {showPassword ? (
                                 <EyeOff
@@ -372,7 +372,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                         </div>
 
                         <Button
-                          className="w-full bg-ocean-gradient hover:shadow-ocean-lg text-white py-4 rounded-xl text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 active:scale-95 group"
+                          className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white py-4 rounded-xl text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 active:scale-95 group"
                           onClick={() => handleClick('login-submit')}
                         >
                           <span>Login</span>
@@ -380,7 +380,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
                         <div className="text-center">
                           <button
-                            className="text-ocean-600 hover:text-ocean-700 font-semibold hover:underline transition-all duration-300 hover:scale-105 active:scale-95 inline-flex items-center gap-2"
+                            className="text-blue-600 hover:text-blue-700 font-semibold hover:underline transition-all duration-300 hover:scale-105 active:scale-95 inline-flex items-center gap-2"
                             onClick={() => handleClick('forgot-password')}
                           >
                             <span>Forgot password?</span>
@@ -400,7 +400,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
                         <Button
                           variant="outline"
-                          className="w-full py-4 rounded-xl border-2 border-slate-200 hover:border-ocean-300 hover:bg-ocean-50 transition-all duration-300 transform hover:scale-105 active:scale-95 group"
+                          className="w-full py-4 rounded-xl border-2 border-slate-200 hover:border-blue-300 hover:bg-blue-50 transition-all duration-300 transform hover:scale-105 active:scale-95 group"
                           onClick={() => handleClick('google-login')}
                         >
                           <svg className="w-6 h-6 mr-3" viewBox="0 0 24 24">
@@ -435,7 +435,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                               toggleMode();
                               handleClick('switch-to-register');
                             }}
-                            className="text-ocean-600 hover:text-ocean-700 font-bold hover:underline transition-all duration-300 hover:scale-105 active:scale-95 inline-flex items-center gap-1"
+                            className="text-blue-600 hover:text-blue-700 font-bold hover:underline transition-all duration-300 hover:scale-105 active:scale-95 inline-flex items-center gap-1"
                           >
                             <span
                               className={
