@@ -1,7 +1,5 @@
 /* global.css */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 :root {
   --tw-gradient-from-ocean: #0ea5e9;
