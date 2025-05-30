@@ -1,18 +1,23 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { onAuthStateChanged, User } from "firebase/auth";
-import { login, loginWithGoogle, logout, register } from "@/lib/firebase/auth/auth";
-import { auth } from "@/lib/firebase/firebaseClient";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { onAuthStateChanged, User } from 'firebase/auth';
+import {
+  login,
+  loginWithGoogle,
+  logout,
+  register,
+} from '@/lib/firebase/auth/auth';
+import { auth } from '@/lib/firebase/firebaseClient';
 
 export default function LoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [isRegistering, setIsRegistering] = useState(false);
   const [user, setUser] = useState<User | null>(null);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
 
   onAuthStateChanged(auth, (user) => {
     if (user) setUser(user);
@@ -21,7 +26,7 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
+    setError('');
     const result = isRegistering
       ? await register(email, password)
       : await login(email, password);
@@ -47,12 +52,17 @@ export default function LoginPage() {
 
   return (
     <div className="max-w-md mx-auto mt-20 p-6 border rounded-xl shadow">
-      <h1 className="text-2xl font-bold mb-4">{isRegistering ? "Register" : "Login"}</h1>
+      <h1 className="text-2xl font-bold mb-4">
+        {isRegistering ? 'Register' : 'Login'}
+      </h1>
 
       {user ? (
         <div>
           <p>Welcome, {user.email}</p>
-          <button onClick={handleLogout} className="mt-4 bg-red-500 text-white px-4 py-2 rounded">
+          <button
+            onClick={handleLogout}
+            className="mt-4 bg-red-500 text-white px-4 py-2 rounded"
+          >
             Logout
           </button>
         </div>
@@ -73,8 +83,11 @@ export default function LoginPage() {
             onChange={(e) => setPassword(e.target.value)}
           />
           {error && <p className="text-red-500">{error}</p>}
-          <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
-            {isRegistering ? "Register" : "Login"}
+          <button
+            type="submit"
+            className="bg-blue-500 text-white px-4 py-2 rounded"
+          >
+            {isRegistering ? 'Register' : 'Login'}
           </button>
           <button
             type="button"
@@ -84,13 +97,15 @@ export default function LoginPage() {
             Continue with Google
           </button>
           <p className="text-sm text-center text-gray-600">
-            {isRegistering ? "Already have an account?" : "Don't have an account?"}{" "}
+            {isRegistering
+              ? 'Already have an account?'
+              : "Don't have an account?"}{' '}
             <button
               type="button"
               className="text-blue-500 underline"
               onClick={() => setIsRegistering(!isRegistering)}
             >
-              {isRegistering ? "Login here" : "Register here"}
+              {isRegistering ? 'Login here' : 'Register here'}
             </button>
           </p>
         </form>

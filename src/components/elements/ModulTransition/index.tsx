@@ -1,6 +1,6 @@
-'use client'
-import { motion } from 'framer-motion'
-import React from 'react'
+'use client';
+import { motion } from 'framer-motion';
+import React from 'react';
 
 const ModuleTransition = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -12,7 +12,7 @@ const ModuleTransition = ({ children }: { children: React.ReactNode }) => {
     >
       {children}
     </motion.div>
-  )
-}
+  );
+};
 
-export default ModuleTransition
+export default ModuleTransition;

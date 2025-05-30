@@ -5,10 +5,10 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   getIdToken,
-} from "firebase/auth";
-import { auth, db } from "../firebaseClient"; // Ensure `db` is Firestore instance
-import Cookies from "js-cookie";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+} from 'firebase/auth';
+import { auth, db } from '../firebaseClient'; // Ensure `db` is Firestore instance
+import Cookies from 'js-cookie';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 function getErrorMessage(error: unknown): string {
   if (error instanceof Error) return error.message;
@@ -16,8 +16,11 @@ function getErrorMessage(error: unknown): string {
 }
 
 // Ensure Firestore user doc has consistent fields
-async function ensureUserDocExists(user: { uid: string; email: string | null }) {
-  const userRef = doc(db, "users", user.uid);
+async function ensureUserDocExists(user: {
+  uid: string;
+  email: string | null;
+}) {
+  const userRef = doc(db, 'users', user.uid);
   const userSnap = await getDoc(userRef);
 
   if (!userSnap.exists()) {
@@ -33,13 +36,21 @@ async function ensureUserDocExists(user: { uid: string; email: string | null }) 
 
 export async function login(email: string, password: string) {
   try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
     const user = userCredential.user;
 
     await ensureUserDocExists(user);
 
     const token = await getIdToken(user);
-    Cookies.set("token", token, { expires: 1, sameSite: "strict", secure: true });
+    Cookies.set('token', token, {
+      expires: 1,
+      sameSite: 'strict',
+      secure: true,
+    });
 
     return { user };
   } catch (error: unknown) {
@@ -49,13 +60,21 @@ export async function login(email: string, password: string) {
 
 export async function register(email: string, password: string) {
   try {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
     const user = userCredential.user;
 
     await ensureUserDocExists(user);
 
     const token = await getIdToken(user);
-    Cookies.set("token", token, { expires: 1, sameSite: "strict", secure: true });
+    Cookies.set('token', token, {
+      expires: 1,
+      sameSite: 'strict',
+      secure: true,
+    });
 
     return { user };
   } catch (error: unknown) {
@@ -72,7 +91,11 @@ export async function loginWithGoogle() {
     await ensureUserDocExists(user);
 
     const token = await getIdToken(user);
-    Cookies.set("token", token, { expires: 1, sameSite: "strict", secure: true });
+    Cookies.set('token', token, {
+      expires: 1,
+      sameSite: 'strict',
+      secure: true,
+    });
 
     return { user };
   } catch (error: unknown) {
@@ -83,7 +106,7 @@ export async function loginWithGoogle() {
 export async function logout() {
   try {
     await signOut(auth);
-    Cookies.remove("token");
+    Cookies.remove('token');
     return { success: true };
   } catch (error: unknown) {
     return { error: getErrorMessage(error) };

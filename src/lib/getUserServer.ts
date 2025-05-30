@@ -1,10 +1,10 @@
-import { cookies } from "next/headers";
+import { cookies } from 'next/headers';
 // Import the function to get the admin auth instance
-import { getAdminAuth } from "./firebase/firebaseAdmin"; // Or from getAdmin.ts
+import { getAdminAuth } from './firebase/firebaseAdmin'; // Or from getAdmin.ts
 
 export async function getUserFromCookie() {
   const cookieStore = await cookies();
-  const token = cookieStore.get("token")?.value;
+  const token = cookieStore.get('token')?.value;
 
   if (!token) return null;
 
@@ -14,7 +14,7 @@ export async function getUserFromCookie() {
     const decodedToken = await adminAuth.verifyIdToken(token);
     return decodedToken;
   } catch (error) {
-    console.error("Invalid token:", error);
+    console.error('Invalid token:', error);
     return null;
   }
 }
