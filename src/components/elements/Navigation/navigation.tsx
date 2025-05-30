@@ -128,21 +128,12 @@ function AppNavbarWithoutSidebar() {
             PetaSehat
           </span>
         </Link>
-
-        <nav className="hidden md:flex items-center gap-6">
-          <Link
-            href="/featured"
-            className="text-sm font-medium text-slate-600 hover:text-ocean-600 transition-all duration-300 hover:scale-105 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-ocean-500 hover:after:w-full after:transition-all after:duration-300"
-          >
-            Featured
-          </Link>
-        </nav>
       </div>
 
       <div className="flex items-center gap-2">
         <Button
           onClick={() => setIsLoginModalOpen(true)}
-          className="flex items-center gap-2 bg-ocean-grass-gradient hover:shadow-ocean-lg text-white hover:scale-105 transition-all duration-300"
+          className="flex items-center gap-2 bg-gradient-to-r from-green-300 to-blue-300 hover:shadow-lg hover:shadow-blue-200/50 text-white hover:scale-105 transition-all duration-300"
         >
           <LogIn className="h-4 w-4" />
           <span className="hidden md:inline">Login</span>
