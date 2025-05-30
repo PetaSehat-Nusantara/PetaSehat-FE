@@ -1,6 +1,6 @@
-// lib/getUserFromCookie.ts
 import { cookies } from "next/headers";
-import { adminAuth } from "./firebase/firebaseAdmin";
+// Import the function to get the admin auth instance
+import { getAdminAuth } from "./firebase/firebaseAdmin"; // Or from getAdmin.ts
 
 export async function getUserFromCookie() {
   const cookieStore = await cookies();
@@ -9,6 +9,8 @@ export async function getUserFromCookie() {
   if (!token) return null;
 
   try {
+    // Get the admin auth instance at runtime when needed
+    const adminAuth = getAdminAuth();
     const decodedToken = await adminAuth.verifyIdToken(token);
     return decodedToken;
   } catch (error) {
