@@ -1,4 +1,5 @@
-'use client';
+"use client"
+
 import {
   Menu,
   ChevronDown,
@@ -8,61 +9,34 @@ import {
   BookOpen,
   GraduationCap,
   HelpCircle,
-  ChevronLeft,
   Instagram,
   Twitter,
   Youtube,
   Facebook,
   Linkedin,
   LogIn,
-} from 'lucide-react';
-import Link from 'next/link';
-import { useState } from 'react';
+} from "lucide-react"
+import Link from "next/link"
+import { useState } from "react"
+import { usePathname } from "next/navigation"
 
-import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarHeader,
-  useSidebar,
-  SidebarProvider,
-  SidebarInset,
-} from '@/components/ui/sidebar';
-import ModuleTransition from '../ModulTransition';
-import { SidebarLayoutProps } from './interface';
-import { useAuthUser } from '@/hooks/use-auth-user';
-import LoginModal from '../AuthModal';
-import SignOut from '../Buttons/SignOut';
+import { Button } from "@/components/ui/button"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { SidebarProvider } from "@/components/ui/sidebar"
+import ModuleTransition from "../ModulTransition"
+import type { SidebarLayoutProps } from "./interface"
+import { useAuthUser } from "@/hooks/use-auth-user"
+import LoginModal from "../AuthModal"
+import SignOut from "../Buttons/SignOut"
+import { SidebarCollapseProvider, useSidebarCollapse } from "./sidebarCollapse"
 
-// Navbar untuk user yang sudah login (dengan sidebar context)
+// --- Navbar with Sidebar ---
 function AppNavbarWithSidebar() {
-  const { toggleSidebar } = useSidebar();
-  const { user } = useAuthUser();
+  const { user } = useAuthUser()
 
   return (
-    <header className="flex h-16 w-full shrink-0 items-center justify-between border-b border-ocean-100 bg-white/90 backdrop-blur-md px-4 md:px-6 sticky top-0 z-50 transition-all duration-300 hover:bg-white/95 hover:shadow-lg">
+    <header className="h-16 flex items-center justify-between border-b border-ocean-100 bg-white/90 backdrop-blur-md px-4 md:px-6 transition-all duration-300 hover:bg-white/95 hover:shadow-lg w-full">
       <div className="flex items-center gap-4">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={toggleSidebar}
-          className="md:hidden hover:bg-ocean-50 hover:scale-110 transition-all duration-300"
-        >
-          <Menu className="h-5 w-5" />
-          <span className="sr-only">Toggle sidebar</span>
-        </Button>
-
         <Link href="/" className="flex items-center gap-2 group">
           <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-ocean-grass-gradient shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
             <span className="text-sm font-bold text-white">P</span>
@@ -90,30 +64,25 @@ function AppNavbarWithSidebar() {
           >
             <div className="h-8 w-8 rounded-full bg-ocean-grass-gradient hover:shadow-md transition-all duration-300" />
             <span className="hidden md:inline text-sm font-medium">
-              {user?.displayName || user?.email || 'User Name'}
+              {user?.displayName || user?.email || "User Name"}
             </span>
             <ChevronDown className="h-4 w-4 transition-transform duration-300 group-hover:rotate-180" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-48 border-ocean-100">
-          <DropdownMenuItem className="hover:bg-ocean-50 transition-colors">
-            Profile
-          </DropdownMenuItem>
-          <DropdownMenuItem className="hover:bg-ocean-50 transition-colors">
-            Settings
-          </DropdownMenuItem>
-          <DropdownMenuItem className="hover:bg-ocean-50 transition-colors">
-            Help
-          </DropdownMenuItem>
+          <DropdownMenuItem className="hover:bg-ocean-50 transition-colors">Profile</DropdownMenuItem>
+          <DropdownMenuItem className="hover:bg-ocean-50 transition-colors">Settings</DropdownMenuItem>
+          <DropdownMenuItem className="hover:bg-ocean-50 transition-colors">Help</DropdownMenuItem>
           <SignOut />
         </DropdownMenuContent>
       </DropdownMenu>
     </header>
-  );
+  )
 }
 
+// --- Navbar without Sidebar ---
 function AppNavbarWithoutSidebar() {
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
 
   return (
     <>
@@ -131,109 +100,192 @@ function AppNavbarWithoutSidebar() {
 
         <div className="flex items-center gap-2">
           <Button
-          onClick={() => setIsLoginModalOpen(true)}
-          className="flex items-center gap-2 bg-gradient-to-r from-green-400 to-blue-400 hover:shadow-lg hover:shadow-blue-200/50 text-white hover:scale-105 transition-all duration-300"
-        >
-          <LogIn className="h-4 w-4" />
-          <span className="hidden md:inline">Login</span>
-        </Button>
+            onClick={() => setIsLoginModalOpen(true)}
+            className="flex items-center gap-2 bg-gradient-to-r from-green-400 to-blue-400 hover:shadow-lg hover:shadow-blue-200/50 text-white hover:scale-105 transition-all duration-300"
+          >
+            <LogIn className="h-4 w-4" />
+            <span className="hidden md:inline">Login</span>
+          </Button>
         </div>
       </header>
 
-      {/* Modal rendered at the document body level */}
-      <LoginModal
-        isOpen={isLoginModalOpen}
-        onClose={() => setIsLoginModalOpen(false)}
-      />
+      <LoginModal isOpen={isLoginModalOpen} onClose={() => setIsLoginModalOpen(false)} />
     </>
-  );
+  )
 }
 
-// Sidebar Component
+// --- Sidebar ---
 export function AppSidebar() {
+  const { collapsed, toggleCollapsed } = useSidebarCollapse()
+  const pathname = usePathname()
+
   const menuItems = [
     {
-      title: 'Rumah Sakit Depok',
-      url: '/rumah-sakit',
+      title: "Homepage",
+      url: "/",
       icon: Home,
-      isActive: false,
+      matchPaths: ["/"], // Exact match for homepage
     },
     {
-      title: 'Rangkuman',
-      url: '/rangkuman',
+      title: "Dashboard",
+      url: "/dashboard",
       icon: BarChart3,
-      isActive: false,
+      matchPaths: ["/dashboard"], // Dashboard route
     },
     {
-      title: 'NusaCari',
-      url: '/nusacari',
+      title: "NusaCari",
+      url: "/nusa-cari",
       icon: Search,
-      isActive: true,
+      matchPaths: ["/nusa-cari"], // NusaCari routes
     },
     {
-      title: 'NusaSimulasi',
-      url: '/nusasimulasi',
+      title: "NusaSimulasi",
+      url: "/nusa-simulasi",
       icon: BookOpen,
-      isActive: false,
+      matchPaths: ["/nusa-simulasi"], // NusaSimulasi routes
     },
     {
-      title: 'NusaLulus',
-      url: '/nusalulus',
+      title: "NusaLulus",
+      url: "/nusa-lulus",
       icon: GraduationCap,
-      isActive: false,
+      matchPaths: ["/nusa-lulus"], // NusaLulus routes
     },
     {
-      title: 'Bantuan',
-      url: '/bantuan',
+      title: "Bantuan",
+      url: "/bantuan",
       icon: HelpCircle,
-      isActive: false,
+      matchPaths: ["/bantuan"], // Help routes
     },
-  ];
+  ]
+
+  // Function to check if a menu item is active
+  const isMenuItemActive = (item: (typeof menuItems)[0]) => {
+    // Special case: if current path is "/" and this is the Homepage item
+    if (pathname === "/" && item.url === "/") {
+      return true
+    }
+
+    // For other routes, check if pathname starts with any of the match paths
+    return item.matchPaths.some((path) => {
+      if (path === "/") return false // Don't match "/" for other items
+      return pathname.startsWith(path)
+    })
+  }
 
   return (
-    <Sidebar className="border-r border-ocean-100 bg-gradient-to-b from-ocean-50/50 to-grass-50/30">
-      <SidebarHeader className="border-b border-ocean-100 p-4 hover:bg-ocean-50/50 transition-colors duration-300">
-        <div className="flex items-center gap-2">
-          <ChevronLeft className="h-4 w-4 text-slate-500 hover:text-ocean-600 transition-colors" />
-          <span className="text-sm font-medium text-slate-700">
-            Rumah Sakit Depok
-          </span>
-        </div>
-      </SidebarHeader>
+    <div
+      className={`fixed top-0 left-0 h-full z-40 border-r border-green-200/50 bg-gradient-to-br from-green-50 via-white to-blue-50 backdrop-blur-lg transition-all duration-300 shadow-xl ${
+        collapsed ? "w-16" : "w-64"
+      }`}
+    >
+      {/* Animated background elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-10 right-4 w-16 h-16 bg-green-200/30 rounded-full animate-pulse" />
+        <div className="absolute bottom-20 left-4 w-12 h-12 bg-blue-200/30 rounded-full animate-pulse delay-1000" />
+        <div className="absolute top-1/2 right-2 w-8 h-8 bg-green-300/20 rounded-full animate-pulse delay-500" />
+      </div>
 
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {menuItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={item.isActive}
-                    className="w-full justify-start hover:scale-105 transition-all duration-300 hover:shadow-md"
+      {/* Header */}
+      <div className="relative border-b border-green-200/50 p-4 bg-gradient-to-r from-green-100/50 via-white/80 to-blue-100/50 backdrop-blur-sm">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="p-1 rounded-lg bg-gradient-to-r from-green-400 to-blue-500 shadow-md">
+            </div>
+            {!collapsed && (
+              <span className="text-sm font-semibold bg-gradient-to-r from-green-700 to-blue-700 bg-clip-text text-transparent">
+                PetaSehat Menu
+              </span>
+            )}
+          </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleCollapsed}
+            className="hover:bg-gradient-to-r hover:from-green-100 hover:to-blue-100 hover:scale-110 transition-all duration-300 rounded-xl group"
+          >
+            <Menu className="h-5 w-5 text-green-600 group-hover:text-blue-600 transition-colors" />
+            <span className="sr-only">Toggle sidebar</span>
+          </Button>
+        </div>
+      </div>
+
+      {/* Menu Content */}
+      <div className="relative bg-gradient-to-b from-transparent via-green-50/30 to-blue-50/30 h-full pt-6 pb-20">
+        <div className="px-3 space-y-2">
+          {menuItems.map((item) => {
+            const isActive = isMenuItemActive(item)
+
+            return (
+              <Link
+                key={item.title}
+                href={item.url}
+                className={`group flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg relative overflow-hidden ${
+                  isActive
+                    ? "bg-gradient-to-r from-green-500 to-blue-500 text-white shadow-lg"
+                    : "hover:bg-gradient-to-r hover:from-green-100/80 hover:to-blue-100/80 text-slate-700 hover:text-slate-900"
+                }`}
+              >
+                {/* Background animation for active item */}
+                {isActive && (
+                  <div className="absolute inset-0 bg-gradient-to-r from-green-400 to-blue-400 opacity-20 animate-pulse" />
+                )}
+
+                <div
+                  className={`relative z-10 p-1 rounded-lg transition-all duration-300 ${
+                    isActive
+                      ? "bg-white/20"
+                      : "group-hover:bg-gradient-to-r group-hover:from-green-200 group-hover:to-blue-200"
+                  }`}
+                >
+                  <item.icon
+                    className={`h-4 w-4 transition-all duration-300 group-hover:scale-110 ${
+                      isActive ? "text-white" : "text-green-600 group-hover:text-blue-600"
+                    }`}
+                  />
+                </div>
+
+                {!collapsed && (
+                  <span
+                    className={`relative z-10 font-medium transition-all duration-300 ${isActive ? "text-white" : ""}`}
                   >
-                    <Link
-                      href={item.url}
-                      className="flex items-center gap-3 px-3 py-2"
-                    >
-                      <item.icon className="h-4 w-4 transition-transform duration-300 group-hover:scale-110" />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-    </Sidebar>
-  );
+                    {item.title}
+                  </span>
+                )}
+
+                {/* Hover effect overlay */}
+                {!isActive && (
+                  <div className="absolute inset-0 bg-gradient-to-r from-green-200/0 to-blue-200/0 group-hover:from-green-200/20 group-hover:to-blue-200/20 transition-all duration-300 rounded-xl" />
+                )}
+              </Link>
+            )
+          })}
+        </div>
+
+        {/* Bottom decorative element */}
+        {!collapsed && (
+          <div className="absolute bottom-6 left-3 right-3">
+            <div className="bg-gradient-to-r from-green-100 to-blue-100 rounded-xl p-4 border border-green-200/50">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-gradient-to-r from-green-400 to-blue-500 rounded-lg flex items-center justify-center">
+                  <span className="text-white text-xs font-bold">P</span>
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-green-700">PetaSehat</p>
+                  <p className="text-xs text-blue-600">Healthcare Platform</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  )
 }
 
-// Footer Component
+// --- Footer ---
 export function AppFooter() {
   return (
-    <footer className="border-t border-ocean-100 bg-gradient-to-r from-ocean-50/50 to-grass-50/50">
+    <footer className="border-t border-ocean-100 bg-gradient-to-r from-ocean-50/50 to-grass-50/50 transition-all duration-300 w-full">
       <div className="flex items-center justify-between px-6 py-4">
         <div className="flex items-center gap-2 group">
           <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-ocean-grass-gradient shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
@@ -245,61 +297,74 @@ export function AppFooter() {
         </div>
 
         <div className="flex items-center gap-4">
-          <span className="text-sm text-slate-600">
-            © 2026 DDOS. All rights reserved.
-          </span>
+          <span className="text-sm text-slate-600">© 2026 DDOS. All rights reserved.</span>
 
           <div className="flex items-center gap-3">
-            {[Instagram, Twitter, Youtube, Facebook, Linkedin].map(
-              (Icon, index) => (
-                <Link
-                  key={index}
-                  href="#"
-                  className="text-slate-400 hover:text-ocean-600 transition-all duration-300 hover:scale-125 hover:rotate-12"
-                  aria-label={Icon.name}
-                >
-                  <Icon className="h-5 w-5" />
-                </Link>
-              )
-            )}
+            {[Instagram, Twitter, Youtube, Facebook, Linkedin].map((Icon, index) => (
+              <Link
+                key={index}
+                href="#"
+                className="text-slate-400 hover:text-ocean-600 transition-all duration-300 hover:scale-125 hover:rotate-12"
+                aria-label={Icon.name}
+              >
+                <Icon className="h-5 w-5" />
+              </Link>
+            ))}
           </div>
         </div>
       </div>
     </footer>
-  );
+  )
 }
 
-const SidebarLayout = ({ children }: SidebarLayoutProps) => {
-  const { user } = useAuthUser();
+// --- Layout with Sidebar ---
+function SidebarLayoutWithSidebar({ children }: SidebarLayoutProps) {
+  const { collapsed } = useSidebarCollapse()
+  const sidebarWidth = collapsed ? "4rem" : "16rem"
 
-  if (!user) {
-    // When user is null, don't show sidebar - just navbar, content, and footer
-    return (
-      <div className="flex min-h-screen w-full flex-col">
-        <AppNavbarWithoutSidebar />
+  return (
+    <div className="min-h-screen flex">
+      <AppSidebar />
+      <div
+        className="flex-1 min-h-screen flex flex-col transition-all duration-300"
+        style={{
+          marginLeft: sidebarWidth,
+          width: `calc(100vw - ${sidebarWidth})`,
+        }}
+      >
+        <AppNavbarWithSidebar />
         <main className="flex-1 w-full">
           <ModuleTransition>{children}</ModuleTransition>
         </main>
         <AppFooter />
       </div>
-    );
+    </div>
+  )
+}
+
+// --- Main Layout ---
+const SidebarLayout = ({ children }: SidebarLayoutProps) => {
+  const { user } = useAuthUser()
+
+  if (!user) {
+    return (
+      <div className="flex min-h-screen flex-col">
+        <AppNavbarWithoutSidebar />
+        <main className="flex-1">
+          <ModuleTransition>{children}</ModuleTransition>
+        </main>
+        <AppFooter />
+      </div>
+    )
   }
 
-  // When user exists, show the full sidebar layout
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen w-full">
-        <AppSidebar />
-        <SidebarInset className="flex flex-1 flex-col">
-          <AppNavbarWithSidebar />
-          <main className="w-full">
-            <ModuleTransition>{children}</ModuleTransition>
-          </main>
-          <AppFooter />
-        </SidebarInset>
-      </div>
+      <SidebarCollapseProvider>
+        <SidebarLayoutWithSidebar>{children}</SidebarLayoutWithSidebar>
+      </SidebarCollapseProvider>
     </SidebarProvider>
-  );
-};
+  )
+}
 
-export default SidebarLayout;
+export default SidebarLayout
