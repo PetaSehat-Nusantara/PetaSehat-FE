@@ -43,6 +43,7 @@ import ModuleTransition from '../ModulTransition';
 import { SidebarLayoutProps } from './interface';
 import { useAuthUser } from '@/hooks/use-auth-user';
 import LoginModal from '../AuthModal';
+import SignOut from '../Buttons/SignOut';
 
 // Navbar untuk user yang sudah login (dengan sidebar context)
 function AppNavbarWithSidebar() {
@@ -104,9 +105,7 @@ function AppNavbarWithSidebar() {
           <DropdownMenuItem className="hover:bg-ocean-50 transition-colors">
             Help
           </DropdownMenuItem>
-          <DropdownMenuItem className="hover:bg-ocean-50 transition-colors">
-            Sign out
-          </DropdownMenuItem>
+          <SignOut />
         </DropdownMenuContent>
       </DropdownMenu>
     </header>

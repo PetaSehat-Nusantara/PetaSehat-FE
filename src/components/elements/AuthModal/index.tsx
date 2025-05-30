@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import Portal from '@/components/ui/portal';
+import { login, loginWithGoogle, register } from '@/lib/firebase/auth/auth';
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -19,6 +20,17 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [clickedElements, setClickedElements] = useState<string[]>([]);
   const [isAnimating, setIsAnimating] = useState(false);
+
+  // Form state
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [registerEmail, setRegisterEmail] = useState('');
+  const [registerPassword, setRegisterPassword] = useState('');
+  const [registerConfirmPassword, setRegisterConfirmPassword] = useState('');
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   if (!isOpen) return null;
 
@@ -33,8 +45,84 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
     setIsAnimating(true);
     setTimeout(() => {
       setMode(mode === 'login' ? 'register' : 'login');
+      setError(null);
       setIsAnimating(false);
+      setShowPassword(false);
+      setShowConfirmPassword(false);
+      setFirstName('');
+      setLastName('');
+      setRegisterEmail('');
+      setRegisterPassword('');
+      setRegisterConfirmPassword('');
+      setLoginEmail('');
+      setLoginPassword('');
     }, 150);
+  };
+
+  // --- Auth Handlers ---
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+
+    if (!firstName || !lastName) {
+      setError('Please enter your first and last name.');
+      return;
+    }
+    if (!registerEmail || !registerPassword) {
+      setError('Please fill in all fields.');
+      return;
+    }
+    if (registerPassword !== registerConfirmPassword) {
+      setError('Passwords do not match.');
+      return;
+    }
+
+    setLoading(true);
+    const { error: regError } = await register(
+      registerEmail,
+      registerPassword,
+      `${firstName} ${lastName}`
+    );
+    setLoading(false);
+
+    if (regError) {
+      setError(regError);
+    } else {
+      onClose();
+    }
+  };
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+
+    if (!loginEmail || !loginPassword) {
+      setError('Please fill in all fields.');
+      return;
+    }
+
+    setLoading(true);
+    const { error: loginError } = await login(loginEmail, loginPassword);
+    setLoading(false);
+
+    if (loginError) {
+      setError(loginError);
+    } else {
+      onClose();
+    }
+  };
+
+  const handleGoogle = async () => {
+    setError(null);
+    setLoading(true);
+    const { error: googleError } = await loginWithGoogle();
+    setLoading(false);
+
+    if (googleError) {
+      setError(googleError);
+    } else {
+      onClose();
+    }
   };
 
   return (
@@ -114,8 +202,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                   className={`transition-all duration-300 ${isAnimating ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}
                 >
                   {mode === 'register' ? (
-                    <>
-                      {/* Enhanced Register Form */}
+                    <form onSubmit={handleRegister}>
                       <div className="text-center space-y-4">
                         <h2 className="text-3xl lg:text-4xl font-bold text-green-600 hover:text-green-700 transition-all duration-500 cursor-pointer">
                           Create Account
@@ -128,27 +215,21 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                       <div className="space-y-6">
                         <div className="grid grid-cols-2 gap-4">
                           <div className="space-y-3">
-                            <Label
-                              htmlFor="firstName"
-                              className="text-sm font-semibold text-slate-700 flex items-center gap-2"
-                            >
-                              First Name
-                            </Label>
+                            <Label htmlFor="firstName">First Name</Label>
                             <Input
                               id="firstName"
+                              value={firstName}
+                              onChange={e => setFirstName(e.target.value)}
                               placeholder="Your first name"
                               className="border-2 border-green-200 focus:border-green-500 focus:ring-green-500/20 rounded-xl py-3 transition-all duration-300 hover:border-green-300 hover:shadow-md focus:shadow-lg"
                             />
                           </div>
                           <div className="space-y-3">
-                            <Label
-                              htmlFor="lastName"
-                              className="text-sm font-semibold text-slate-700 flex items-center gap-2"
-                            >
-                              Last Name
-                            </Label>
+                            <Label htmlFor="lastName">Last Name</Label>
                             <Input
                               id="lastName"
+                              value={lastName}
+                              onChange={e => setLastName(e.target.value)}
                               placeholder="Your last name"
                               className="border-2 border-blue-200 focus:border-blue-500 focus:ring-blue-500/20 rounded-xl py-3 transition-all duration-300 hover:border-blue-300 hover:shadow-md focus:shadow-lg"
                             />
@@ -156,95 +237,69 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                         </div>
 
                         <div className="space-y-3">
-                          <Label
-                            htmlFor="email"
-                            className="text-sm font-semibold text-slate-700 flex items-center gap-2"
-                          >
-                            Email
-                          </Label>
+                          <Label htmlFor="registerEmail">Email</Label>
                           <Input
-                            id="email"
+                            id="registerEmail"
                             type="email"
+                            value={registerEmail}
+                            onChange={e => setRegisterEmail(e.target.value)}
                             placeholder="email@example.com"
                             className="border-2 border-green-200 focus:border-green-500 focus:ring-green-500/20 rounded-xl py-3 transition-all duration-300 hover:border-green-300 hover:shadow-md focus:shadow-lg"
                           />
                         </div>
 
                         <div className="space-y-3">
-                          <Label
-                            htmlFor="password"
-                            className="text-sm font-semibold text-slate-700 flex items-center gap-2"
-                          >
-                            Password
-                          </Label>
+                          <Label htmlFor="registerPassword">Password</Label>
                           <div className="relative">
                             <Input
-                              id="password"
+                              id="registerPassword"
                               type={showPassword ? 'text' : 'password'}
+                              value={registerPassword}
+                              onChange={e => setRegisterPassword(e.target.value)}
                               placeholder="Enter a strong password"
                               className="border-2 border-green-200 focus:border-green-500 focus:ring-green-500/20 rounded-xl py-3 pr-12 transition-all duration-300 hover:border-green-300 hover:shadow-md focus:shadow-lg"
                             />
                             <button
                               type="button"
-                              onClick={() => {
-                                setShowPassword(!showPassword);
-                                handleClick('toggle-password');
-                              }}
+                              onClick={() => setShowPassword(!showPassword)}
                               className="absolute right-3 top-1/2 -translate-y-1/2 text-green-400 hover:text-green-600 p-1 rounded-lg hover:bg-green-50 transition-all duration-300 hover:scale-110 active:scale-95"
                             >
-                              {showPassword ? (
-                                <EyeOff
-                                  className={`h-5 w-5 ${clickedElements.includes('toggle-password') ? 'animate-pulse' : ''}`}
-                                />
-                              ) : (
-                                <Eye
-                                  className={`h-5 w-5 ${clickedElements.includes('toggle-password') ? 'animate-pulse' : ''}`}
-                                />
-                              )}
+                              {showPassword ? <EyeOff /> : <Eye />}
                             </button>
                           </div>
                         </div>
 
                         <div className="space-y-3">
-                          <Label
-                            htmlFor="confirmPassword"
-                            className="text-sm font-semibold text-slate-700 flex items-center gap-2"
-                          >
-                            Confirm Password
-                          </Label>
+                          <Label htmlFor="registerConfirmPassword">Confirm Password</Label>
                           <div className="relative">
                             <Input
-                              id="confirmPassword"
+                              id="registerConfirmPassword"
                               type={showConfirmPassword ? 'text' : 'password'}
+                              value={registerConfirmPassword}
+                              onChange={e => setRegisterConfirmPassword(e.target.value)}
                               placeholder="Confirm your password"
                               className="border-2 border-blue-200 focus:border-blue-500 focus:ring-blue-500/20 rounded-xl py-3 pr-12 transition-all duration-300 hover:border-blue-300 hover:shadow-md focus:shadow-lg"
                             />
                             <button
                               type="button"
-                              onClick={() => {
-                                setShowConfirmPassword(!showConfirmPassword);
-                                handleClick('toggle-confirm-password');
-                              }}
+                              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                               className="absolute right-3 top-1/2 -translate-y-1/2 text-blue-400 hover:text-blue-600 p-1 rounded-lg hover:bg-blue-50 transition-all duration-300 hover:scale-110 active:scale-95"
                             >
-                              {showConfirmPassword ? (
-                                <EyeOff
-                                  className={`h-5 w-5 ${clickedElements.includes('toggle-confirm-password') ? 'animate-pulse' : ''}`}
-                                />
-                              ) : (
-                                <Eye
-                                  className={`h-5 w-5 ${clickedElements.includes('toggle-confirm-password') ? 'animate-pulse' : ''}`}
-                                />
-                              )}
+                              {showConfirmPassword ? <EyeOff /> : <Eye />}
                             </button>
                           </div>
                         </div>
 
+                        {error && (
+                          <div className="text-red-500 text-center">{error}</div>
+                        )}
+
                         <Button
                           className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white py-4 rounded-xl text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 active:scale-95 group"
-                          onClick={() => handleClick('register-submit')}
+                          type="submit"
+                          disabled={loading}
                         >
-                          <span>Register</span>
+                          {loading ? 'Registering...' : 'Register'}
                         </Button>
 
                         <div className="relative">
@@ -261,7 +316,9 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                         <Button
                           variant="outline"
                           className="w-full py-4 rounded-xl border-2 border-slate-200 hover:border-green-300 hover:bg-green-50 transition-all duration-300 transform hover:scale-105 active:scale-95 group"
-                          onClick={() => handleClick('google-register')}
+                          type="button"
+                          onClick={handleGoogle}
+                          disabled={loading}
                         >
                           <svg className="w-6 h-6 mr-3" viewBox="0 0 24 24">
                             <path
@@ -281,9 +338,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                               d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                             />
                           </svg>
-                          <span
-                            className={`text-lg font-medium ${clickedElements.includes('google-register') ? 'animate-pulse' : ''}`}
-                          >
+                          <span className="text-lg font-medium">
                             Register with Google
                           </span>
                         </Button>
@@ -296,6 +351,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                               handleClick('switch-to-login');
                             }}
                             className="text-green-600 hover:text-green-700 font-bold hover:underline transition-all duration-300 hover:scale-105 active:scale-95 inline-flex items-center gap-1"
+                            type="button"
                           >
                             <span
                               className={
@@ -309,10 +365,9 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                           </button>
                         </p>
                       </div>
-                    </>
+                    </form>
                   ) : (
-                    <>
-                      {/* Enhanced Login Form */}
+                    <form onSubmit={handleLogin}>
                       <div className="text-center space-y-4">
                         <h2 className="text-3xl lg:text-4xl font-bold text-blue-600 hover:text-blue-700 transition-all duration-500 cursor-pointer">
                           Login to Your Account
@@ -322,66 +377,55 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
                       <div className="space-y-6">
                         <div className="space-y-3">
-                          <Label
-                            htmlFor="loginEmail"
-                            className="text-sm font-semibold text-slate-700 flex items-center gap-2"
-                          >
-                            Email
-                          </Label>
+                          <Label htmlFor="loginEmail">Email</Label>
                           <Input
                             id="loginEmail"
                             type="email"
+                            value={loginEmail}
+                            onChange={e => setLoginEmail(e.target.value)}
                             placeholder="email@example.com"
                             className="border-2 border-blue-200 focus:border-blue-500 focus:ring-blue-500/20 rounded-xl py-4 transition-all duration-300 hover:border-blue-300 hover:shadow-md focus:shadow-lg text-lg"
                           />
                         </div>
 
                         <div className="space-y-3">
-                          <Label
-                            htmlFor="loginPassword"
-                            className="text-sm font-semibold text-slate-700 flex items-center gap-2"
-                          >
-                            Password
-                          </Label>
+                          <Label htmlFor="loginPassword">Password</Label>
                           <div className="relative">
                             <Input
                               id="loginPassword"
                               type={showPassword ? 'text' : 'password'}
+                              value={loginPassword}
+                              onChange={e => setLoginPassword(e.target.value)}
                               placeholder="Enter your password"
                               className="border-2 border-green-200 focus:border-green-500 focus:ring-green-500/20 rounded-xl py-4 pr-12 transition-all duration-300 hover:border-green-300 hover:shadow-md focus:shadow-lg text-lg"
                             />
                             <button
                               type="button"
-                              onClick={() => {
-                                setShowPassword(!showPassword);
-                                handleClick('toggle-login-password');
-                              }}
+                              onClick={() => setShowPassword(!showPassword)}
                               className="absolute right-3 top-1/2 -translate-y-1/2 text-green-400 hover:text-green-600 p-1 rounded-lg hover:bg-green-50 transition-all duration-300 hover:scale-110 active:scale-95"
                             >
-                              {showPassword ? (
-                                <EyeOff
-                                  className={`h-5 w-5 ${clickedElements.includes('toggle-login-password') ? 'animate-pulse' : ''}`}
-                                />
-                              ) : (
-                                <Eye
-                                  className={`h-5 w-5 ${clickedElements.includes('toggle-login-password') ? 'animate-pulse' : ''}`}
-                                />
-                              )}
+                              {showPassword ? <EyeOff /> : <Eye />}
                             </button>
                           </div>
                         </div>
 
+                        {error && (
+                          <div className="text-red-500 text-center">{error}</div>
+                        )}
+
                         <Button
                           className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white py-4 rounded-xl text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 active:scale-95 group"
-                          onClick={() => handleClick('login-submit')}
+                          type="submit"
+                          disabled={loading}
                         >
-                          <span>Login</span>
+                          {loading ? 'Logging in...' : 'Login'}
                         </Button>
 
                         <div className="text-center">
                           <button
                             className="text-blue-600 hover:text-blue-700 font-semibold hover:underline transition-all duration-300 hover:scale-105 active:scale-95 inline-flex items-center gap-2"
                             onClick={() => handleClick('forgot-password')}
+                            type="button"
                           >
                             <span>Forgot password?</span>
                           </button>
@@ -401,7 +445,9 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                         <Button
                           variant="outline"
                           className="w-full py-4 rounded-xl border-2 border-slate-200 hover:border-blue-300 hover:bg-blue-50 transition-all duration-300 transform hover:scale-105 active:scale-95 group"
-                          onClick={() => handleClick('google-login')}
+                          type="button"
+                          onClick={handleGoogle}
+                          disabled={loading}
                         >
                           <svg className="w-6 h-6 mr-3" viewBox="0 0 24 24">
                             <path
@@ -421,9 +467,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                               d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                             />
                           </svg>
-                          <span
-                            className={`text-lg font-medium ${clickedElements.includes('google-login') ? 'animate-pulse' : ''}`}
-                          >
+                          <span className="text-lg font-medium">
                             Login with Google
                           </span>
                         </Button>
@@ -436,6 +480,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                               handleClick('switch-to-register');
                             }}
                             className="text-blue-600 hover:text-blue-700 font-bold hover:underline transition-all duration-300 hover:scale-105 active:scale-95 inline-flex items-center gap-1"
+                            type="button"
                           >
                             <span
                               className={
@@ -449,7 +494,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                           </button>
                         </p>
                       </div>
-                    </>
+                    </form>
                   )}
                 </div>
               </CardContent>
