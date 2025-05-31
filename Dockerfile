@@ -1,6 +1,8 @@
+# Use a glibc-based Node.js image
 FROM node:20-slim
 
 # Define build arguments for NEXT_PUBLIC variables
+# These are needed if your Next.js app uses NEXT_PUBLIC variables during the build process
 ARG NEXT_PUBLIC_FIREBASE_API_KEY
 ARG NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
 ARG NEXT_PUBLIC_FIREBASE_PROJECT_ID
@@ -8,35 +10,28 @@ ARG NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
 ARG NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
 ARG NEXT_PUBLIC_FIREBASE_APP_ID
 ARG NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
-ARG GEMINI_API_KEY
-ARG PINECONE_API_KEY
-ARG PINECONE_ENVIRONMENT
-ARG PINECONE_INDEX_NAME
 
-# Set environment variables from build arguments (for access during build)
-ENV NEXT_PUBLIC_FIREBASE_API_KEY=$NEXT_PUBLIC_FIREBASE_API_KEY
-ENV NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=$NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
-ENV NEXT_PUBLIC_FIREBASE_PROJECT_ID=$NEXT_PUBLIC_FIREBASE_PROJECT_ID
-ENV NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=$NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
-ENV NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=$NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
-ENV NEXT_PUBLIC_FIREBASE_APP_ID=$NEXT_PUBLIC_FIREBASE_APP_ID
-ENV NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=$NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
-ENV GEMINI_API_KEY=$GEMINI_API_KEY
-ENV PINECONE_API_KEY=$PINECONE_API_KEY
-ENV PINECONE_ENVIRONMENT=$PINECONE_ENVIRONMENT
-ENV PINECONE_INDEX_NAME=$PINECONE_INDEX_NAME
+# We do NOT set runtime secrets (like GEMINI_API_KEY) as ARG or ENV here.
+# They are passed as environment variables during `docker run`.
 
 WORKDIR /app
 
+# Copy package.json and package-lock.json (or yarn.lock, etc.)
 COPY package*.json ./
-RUN npm ci --force
 
+# Install dependencies
+# Using npm ci for reproducible builds. Remove --force.
+RUN npm ci
+
+# Copy the rest of the application code
 COPY . .
 
-# Build the Next.js app (now with NEXT_PUBLIC env vars available)
+# Build the Next.js application
+# NEXT_PUBLIC variables are available here from the build arguments
 RUN npm run build
 
+# Expose the port your Next.js app listens on
 EXPOSE 3000
 
-# The FIREBASE_ variables are injected at runtime by the docker run command
+# The runtime variables (including secrets) are injected by the docker run command
 CMD ["npm", "start"]
