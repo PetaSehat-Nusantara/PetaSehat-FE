@@ -1,12 +1,12 @@
-specVersion: "v1"
-serviceId: "peta-sehat-fe"
-location: "us-central1"
+specVersion: 'v1'
+serviceId: 'peta-sehat-fe'
+location: 'us-central1'
 schema:
-  source: "./schema"
+  source: './schema'
   datasource:
     postgresql:
-      database: "fdcdb"
+      database: 'fdcdb'
       cloudSql:
-        instanceId: "peta-sehat-fe-fdc"
+        instanceId: 'peta-sehat-fe-fdc'
       # schemaValidation: "COMPATIBLE"
-connectorDirs: ["./connector"]
+connectorDirs: ['./connector']

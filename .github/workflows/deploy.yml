@@ -10,54 +10,125 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
 
-    - name: Log in to Google Container Registry
-      uses: docker/login-action@v2
-      with:
-        registry: gcr.io
-        username: _json_key
-        password: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+      - name: Log in to Google Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: gcr.io
+          username: _json_key
+          password: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
 
-    - name: Build Docker image
-      run: |
-        docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/next-app:latest .
+      - name: Build Docker image
+        run: |
+          docker build \
+            --no-cache-filter "pnpm install --frozen-lockfile" \
+            --no-cache-filter "pnpm run build" \
+            --build-arg NEXT_PUBLIC_FIREBASE_API_KEY=${{ secrets.NEXT_PUBLIC_FIREBASE_API_KEY }} \
+            --build-arg NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=${{ secrets.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN }} \
+            --build-arg NEXT_PUBLIC_FIREBASE_PROJECT_ID=${{ secrets.NEXT_PUBLIC_FIREBASE_PROJECT_ID }} \
+            --build-arg NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=${{ secrets.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET }} \
+            --build-arg NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=${{ secrets.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID }} \
+            --build-arg NEXT_PUBLIC_FIREBASE_APP_ID=${{ secrets.NEXT_PUBLIC_FIREBASE_APP_ID }} \
+            --build-arg NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=${{ secrets.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID }} \
+            -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/next-app:latest .
 
-    - name: Push Docker image
-      run: |
-        docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/next-app:latest
+      - name: Push Docker image
+        run: |
+          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/next-app:latest
 
-    - name: Set up SSH key
-      run: |
-        mkdir -p ~/.ssh
-        echo "${{ secrets.GCP_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        ssh-keyscan -H ${{ secrets.GCP_VM_HOST }} >> ~/.ssh/known_hosts
+      - name: Set up SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.GCP_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.GCP_VM_HOST }} >> ~/.ssh/known_hosts
 
-    - name: Deploy Docker container on GCP VM
-      run: |
-        ssh ${{ secrets.GCP_VM_USER }}@${{ secrets.GCP_VM_HOST }} << 'EOF'
-          # Pull latest image
-          docker pull gcr.io/${{ secrets.GCP_PROJECT_ID }}/next-app:latest
+      - name: Deploy Docker container and Caddy on GCP VM
+        env:
+          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+          GCP_VM_USER: ${{ secrets.GCP_VM_USER }}
+          GCP_VM_HOST: ${{ secrets.GCP_VM_HOST }}
+          NEXT_PUBLIC_FIREBASE_API_KEY: ${{ secrets.NEXT_PUBLIC_FIREBASE_API_KEY }}
+          NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: ${{ secrets.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN }}
+          NEXT_PUBLIC_FIREBASE_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_PROJECT_ID }}
+          NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: ${{ secrets.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET }}
+          NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID }}
+          NEXT_PUBLIC_FIREBASE_APP_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_APP_ID }}
+          NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID }}
+          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+          FIREBASE_CLIENT_EMAIL: ${{ secrets.FIREBASE_CLIENT_EMAIL }}
+          FIREBASE_PRIVATE_KEY: |
+            ${{ secrets.FIREBASE_PRIVATE_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          PINECONE_API_KEY: ${{ secrets.PINECONE_API_KEY }}
+          PINECONE_ENVIRONMENT: ${{ secrets.PINECONE_ENVIRONMENT }}
+          PINECONE_INDEX_NAME: ${{ secrets.PINECONE_INDEX_NAME }}
+          NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: ${{ secrets.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY }}
+          BACKEND_API: ${{ secrets.BACKEND_API }}
+        run: |
+          ssh -o StrictHostKeyChecking=no $GCP_VM_USER@$GCP_VM_HOST bash <<EOF
 
-          # Stop and remove existing container if any
-          docker rm -f next-app || true
+            set -e
 
-          # Run new container with env variables
-          docker run -d --name next-app -p 3000:3000 \
-            -e NEXT_PUBLIC_FIREBASE_API_KEY="${{ secrets.NEXT_PUBLIC_FIREBASE_API_KEY }}" \
-            -e NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN="${{ secrets.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN }}" \
-            -e NEXT_PUBLIC_FIREBASE_PROJECT_ID="${{ secrets.NEXT_PUBLIC_FIREBASE_PROJECT_ID }}" \
-            -e NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET="${{ secrets.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET }}" \
-            -e NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID="${{ secrets.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID }}" \
-            -e NEXT_PUBLIC_FIREBASE_APP_ID="${{ secrets.NEXT_PUBLIC_FIREBASE_APP_ID }}" \
-            -e NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID="${{ secrets.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID }}" \
-            -e FIREBASE_PROJECT_ID="${{ secrets.FIREBASE_PROJECT_ID }}" \
-            -e FIREBASE_CLIENT_EMAIL="${{ secrets.FIREBASE_CLIENT_EMAIL }}" \
-            -e FIREBASE_PRIVATE_KEY="${{ secrets.FIREBASE_PRIVATE_KEY }}" \
-            gcr.io/${{ secrets.GCP_PROJECT_ID }}/next-app:latest
-        EOF
+            echo "GCP_PROJECT_ID: ${GCP_PROJECT_ID}"
+            echo "Image: gcr.io/${GCP_PROJECT_ID}/next-app:latest"
+
+            # Pull latest Next.js image
+            docker pull gcr.io/${GCP_PROJECT_ID}/next-app:latest
+
+            # Remove existing Next.js container if running
+            docker rm -f next-app || true
+
+            # Run Next.js container with necessary environment variables (including secrets)
+            docker run -d --name next-app -p 3000:3000 \
+              -e NEXT_PUBLIC_FIREBASE_API_KEY="${NEXT_PUBLIC_FIREBASE_API_KEY}" \
+              -e NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN="${NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN}" \
+              -e NEXT_PUBLIC_FIREBASE_PROJECT_ID="${NEXT_PUBLIC_FIREBASE_PROJECT_ID}" \
+              -e NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET="${NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET}" \
+              -e NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID="${NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID}" \
+              -e NEXT_PUBLIC_FIREBASE_APP_ID="${NEXT_PUBLIC_FIREBASE_APP_ID}" \
+              -e NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID="${NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID}" \
+              -e FIREBASE_PROJECT_ID="${FIREBASE_PROJECT_ID}" \
+              -e FIREBASE_CLIENT_EMAIL="${FIREBASE_CLIENT_EMAIL}" \
+              -e FIREBASE_PRIVATE_KEY="${FIREBASE_PRIVATE_KEY}" \
+              -e GEMINI_API_KEY="${GEMINI_API_KEY}" \
+              -e PINECONE_API_KEY="${PINECONE_API_KEY}" \
+              -e PINECONE_ENVIRONMENT="${PINECONE_ENVIRONMENT}" \
+              -e PINECONE_INDEX_NAME="${PINECONE_INDEX_NAME}" \
+              -e NEXT_PUBLIC_GOOGLE_MAPS_API_KEY="${NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}" \
+              -e BACKEND_API="${BACKEND_API}" \
+              gcr.io/${GCP_PROJECT_ID}/next-app:latest
+
+            # Update the Caddy configuration using sudo with the -n flag
+            echo "www.petasehat.site, petasehat.site {
+                  reverse_proxy localhost:3000
+            
+                  @static {
+                  path /_next/static/*
+                  path /public/*
+                }
+            }
+  
+            www.api.petasehat.site, api.petasehat.site {
+            reverse_proxy localhost:8000
+          }" | sudo -n tee /etc/caddy/Caddyfile > /dev/null
+
+            # Reload Caddy to apply the new configuration
+            sudo -n systemctl reload caddy || sudo -n caddy reload
+
+            # Remove old Caddy container if any
+            docker rm -f caddy || true
+
+            # Run Caddy container with mounted volumes for certs and config
+            docker run -d --name caddy -p 80:80 -p 443:443 \
+              -v /etc/caddy/Caddyfile:/etc/caddy/Caddyfile \
+              -v caddy_data:/data \
+              -v caddy_config:/config \
+              caddy:latest
+
+          EOF
