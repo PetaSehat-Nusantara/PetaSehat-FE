@@ -1,22 +1,27 @@
-"use client";
+'use client';
 
-import type React from "react";
-import { useState, useRef, useEffect } from "react";
-import { Send, Bot, ChevronDown, ChevronUp, Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
-import ReactMarkdown from "react-markdown";
-import { useAuthUser } from "@/hooks/use-auth-user";
-import { useRouter } from "next/navigation";
-import LoadingComponent from "@/components/elements/LoadingComponent";
-import Image from "next/image";
+import type React from 'react';
+import { useState, useRef, useEffect } from 'react';
+import { Send, Bot, ChevronDown, ChevronUp, Loader2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from '@/components/ui/card';
+import { cn } from '@/lib/utils';
+import ReactMarkdown from 'react-markdown';
+import { useAuthUser } from '@/hooks/use-auth-user';
+import { useRouter } from 'next/navigation';
+import LoadingComponent from '@/components/elements/LoadingComponent';
+import Image from 'next/image';
 
 type Message = {
   id: string;
   content: string;
-  role: "user" | "assistant";
+  role: 'user' | 'assistant';
   timestamp: string; // ISO string, NOT Date
   isError?: boolean;
 };
@@ -29,21 +34,21 @@ type NusaInfoModuleProps = {
 };
 
 const NusaInfoModule = ({
-                          initialPrompt = "NusaInfo kami menyediakan informasi terkait infrastruktur kesehatan, sebutkan apa yang bisa saya bantu :)",
-                          className,
-                          title = "NusaInfo",
-                          subtitle = "AI Assistant",
-                        }: NusaInfoModuleProps) => {
+  initialPrompt = 'NusaInfo kami menyediakan informasi terkait infrastruktur kesehatan, sebutkan apa yang bisa saya bantu :)',
+  className,
+  title = 'NusaInfo',
+  subtitle = 'AI Assistant',
+}: NusaInfoModuleProps) => {
   const [messages, setMessages] = useState<Message[]>([
     {
-      id: "welcome-message",
+      id: 'welcome-message',
       content: initialPrompt,
-      role: "assistant",
+      role: 'assistant',
       timestamp: new Date().toISOString(),
     },
   ]);
 
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -53,13 +58,13 @@ const NusaInfoModule = ({
 
   useEffect(() => {
     if (!loading && !user) {
-      router.replace("/");
+      router.replace('/');
     }
   }, [user, loading, router]);
 
   // Scroll to bottom when messages change
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
   // Focus input when chat is opened
@@ -86,12 +91,12 @@ const NusaInfoModule = ({
     const userMessage: Message = {
       id: `user-${Date.now()}`,
       content: input,
-      role: "user",
+      role: 'user',
       timestamp: now,
     };
 
     setMessages((prev) => [...prev, userMessage]);
-    setInput("");
+    setInput('');
     setIsLoading(true);
 
     try {
@@ -100,15 +105,15 @@ const NusaInfoModule = ({
       const assistantMessage: Message = {
         id: `assistant-${Date.now()}`,
         content: response,
-        role: "assistant",
+        role: 'assistant',
         timestamp: new Date().toISOString(),
       };
 
       setMessages((prev) => [...prev, assistantMessage]);
     } catch (error: unknown) {
-      console.error("Error fetching response from Vertex AI:", error);
+      console.error('Error fetching response from Vertex AI:', error);
 
-      let errorMessageText = "Maaf, terjadi kesalahan tak terduga.";
+      let errorMessageText = 'Maaf, terjadi kesalahan tak terduga.';
       if (error instanceof Error) {
         errorMessageText = error.message || errorMessageText;
       }
@@ -116,7 +121,7 @@ const NusaInfoModule = ({
       const errorMessage: Message = {
         id: `error-${Date.now()}`,
         content: errorMessageText,
-        role: "assistant",
+        role: 'assistant',
         timestamp: new Date().toISOString(),
         isError: true,
       };
@@ -130,10 +135,10 @@ const NusaInfoModule = ({
   // Function to call Vertex AI API
   const callVertexAI = async (prompt: string): Promise<string> => {
     try {
-      const response = await fetch("/api/vertex-ai", {
-        method: "POST",
+      const response = await fetch('/api/vertex-ai', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({ prompt }),
       });
@@ -141,66 +146,52 @@ const NusaInfoModule = ({
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Terjadi kesalahan tak terduga.");
+        throw new Error(data.error || 'Terjadi kesalahan tak terduga.');
       }
 
       return data.response;
     } catch (error: unknown) {
       if (error instanceof Error) {
-        throw new Error(error.message || "Terjadi kesalahan tak terduga.");
+        throw new Error(error.message || 'Terjadi kesalahan tak terduga.');
       } else {
-        throw new Error("Terjadi kesalahan tak terduga.");
+        throw new Error('Terjadi kesalahan tak terduga.');
       }
     }
   };
 
   return (
-    <div className={cn("min-h-screen h-screen w-full flex flex-col bg-gradient-to-br from-emerald-100 via-slate-50 to-blue-100", className)}>
+    <div
+      className={cn(
+        'min-h-screen h-screen w-full flex flex-col',
+        className
+      )}
+    >
       <Card
         className={cn(
-          "flex flex-col flex-1 h-full w-full border-2 border-dashed border-slate-400/60 rounded-none shadow-none overflow-hidden bg-transparent"
+          'flex flex-col flex-1 h-full w-full rounded-none shadow-none overflow-hidden bg-transparent'
         )}
       >
-        {/* Animated background elements */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-4 right-6 w-12 h-12 bg-emerald-300/30 rounded-full animate-pulse" />
-          <div className="absolute bottom-16 left-4 w-8 h-8 bg-blue-300/30 rounded-full animate-pulse delay-1000" />
-          <div className="absolute top-1/2 right-2 w-6 h-6 bg-emerald-400/25 rounded-full animate-pulse delay-500" />
-        </div>
-
         {/* Chat Header */}
         <CardHeader
-          className="relative p-4 flex flex-row items-center justify-between bg-gradient-to-r from-emerald-200/80 via-slate-100/90 to-blue-200/80 backdrop-blur-sm border-b-2 border-dashed border-slate-300/60 cursor-pointer hover:from-emerald-300/60 hover:to-blue-300/60 transition-all duration-300"
+          className="relative px-2 flex flex-row items-center justify-between"
           onClick={() => setIsCollapsed(!isCollapsed)}
         >
           <div className="flex items-center gap-3">
-            <div className="relative p-2 rounded-xl bg-gradient-to-r from-emerald-600 to-blue-700 shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-300">
+            <div className="relative p-2 rounded-xl bg-gradient-to-r from-emerald-600 to-blue-700 shadow-lg hover:scale-110 transition-all duration-300">
               <Bot className="h-5 w-5 text-white" />
               {/* Glow effect */}
-              <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-emerald-600 to-blue-700 opacity-20 animate-pulse" />
             </div>
             <div>
               <h3 className="font-bold text-lg bg-gradient-to-r from-emerald-700 to-blue-800 bg-clip-text text-transparent">
                 {title}
               </h3>
               {!isCollapsed && (
-                <p className="text-xs text-slate-700 bg-gradient-to-r from-emerald-600 to-blue-700 bg-clip-text text-transparent">
+                <p className="text-xs bg-gradient-to-r from-emerald-600 to-blue-700 bg-clip-text text-transparent">
                   {subtitle}
                 </p>
               )}
             </div>
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 rounded-full hover:bg-gradient-to-r hover:from-emerald-200 hover:to-blue-200 hover:scale-110 transition-all duration-300 group"
-          >
-            {isCollapsed ? (
-              <ChevronDown className="h-4 w-4 text-emerald-700 group-hover:text-blue-800 transition-colors" />
-            ) : (
-              <ChevronUp className="h-4 w-4 text-emerald-700 group-hover:text-blue-800 transition-colors" />
-            )}
-          </Button>
         </CardHeader>
 
         {/* Chat Content */}
@@ -211,7 +202,7 @@ const NusaInfoModule = ({
                 {messages.map((message, index) => (
                   <div key={message.id} className="flex items-start gap-2">
                     {/* Mascot for assistant */}
-                    {message.role === "assistant" && !message.isError && (
+                    {message.role === 'assistant' && !message.isError && (
                       <div className="flex-shrink-0 pt-1">
                         <Image
                           src="/VariantAbe.png"
@@ -223,47 +214,57 @@ const NusaInfoModule = ({
                       </div>
                     )}
                     <div className="flex-1">
-                      {index > 0 && message.role === "assistant" && (
+                      {index > 0 && message.role === 'assistant' && (
                         <div className="border-t border-dashed border-emerald-300/50 my-4"></div>
                       )}
                       <div
                         className={cn(
-                          "p-3 rounded-xl text-sm transition-all duration-300 hover:shadow-md relative overflow-hidden",
-                          message.role === "user"
-                            ? "bg-gradient-to-r from-emerald-200 to-blue-200 ml-auto max-w-[85%] rounded-tr-none"
+                          'p-3 rounded-xl text-sm transition-all duration-300 hover:shadow-md relative overflow-hidden',
+                          message.role === 'user'
+                            ? 'bg-gradient-to-r from-emerald-200 to-blue-200 ml-auto max-w-[85%] rounded-tr-none'
                             : message.isError
-                              ? "bg-gradient-to-r from-red-100 to-red-200 border border-red-400 text-red-700 mr-auto max-w-[90%] rounded-tl-none"
-                              : "bg-gradient-to-r from-slate-100 to-slate-200 mr-auto max-w-[90%] rounded-tl-none border border-emerald-300/40"
+                              ? 'bg-gradient-to-r from-red-100 to-red-200 border border-red-400 text-red-700 mr-auto max-w-[90%] rounded-tl-none'
+                              : 'bg-gradient-to-r from-slate-100 to-slate-200 mr-auto max-w-[90%] rounded-tl-none border border-emerald-300/40'
                         )}
                       >
                         {/* Background animation for assistant messages */}
-                        {message.role === "assistant" && !message.isError ? (
+                        {message.role === 'assistant' && !message.isError ? (
                           <div
                             className={cn(
-                              "relative z-10 text-slate-700",
-                              "prose prose-sm max-w-none prose-p:mb-2 prose-li:mb-1 prose-strong:text-emerald-700 prose-em:text-blue-700"
+                              'relative z-10 text-slate-700',
+                              'prose prose-sm max-w-none prose-p:mb-2 prose-li:mb-1 prose-strong:text-emerald-700 prose-em:text-blue-700'
                             )}
                           >
                             <ReactMarkdown
                               components={{
                                 ul: (props) => (
-                                  <ul className="list-disc pl-5 my-2" {...props} />
+                                  <ul
+                                    className="list-disc pl-5 my-2"
+                                    {...props}
+                                  />
                                 ),
                                 ol: (props) => (
-                                  <ol className="list-decimal pl-5 my-2" {...props} />
+                                  <ol
+                                    className="list-decimal pl-5 my-2"
+                                    {...props}
+                                  />
                                 ),
                                 li: (props) => (
                                   <li className="mb-1" {...props} />
                                 ),
                                 strong: (props) => (
-                                  <strong className="font-semibold text-emerald-700" {...props} />
+                                  <strong
+                                    className="font-semibold text-emerald-700"
+                                    {...props}
+                                  />
                                 ),
                                 em: (props) => (
-                                  <em className="italic text-blue-700" {...props} />
+                                  <em
+                                    className="italic text-blue-700"
+                                    {...props}
+                                  />
                                 ),
-                                p: (props) => (
-                                  <p className="mb-2" {...props} />
-                                ),
+                                p: (props) => <p className="mb-2" {...props} />,
                               }}
                             >
                               {message.content}
@@ -272,12 +273,12 @@ const NusaInfoModule = ({
                         ) : (
                           <span
                             className={cn(
-                              "relative z-10",
-                              message.role === "user"
-                                ? "text-slate-800"
+                              'relative z-10',
+                              message.role === 'user'
+                                ? 'text-slate-800'
                                 : message.isError
-                                  ? "text-red-700 font-semibold"
-                                  : "text-slate-700"
+                                  ? 'text-red-700 font-semibold'
+                                  : 'text-slate-700'
                             )}
                           >
                             {message.content}
@@ -285,8 +286,8 @@ const NusaInfoModule = ({
                         )}
                         <span className="text-[10px] text-slate-500 mt-2 block text-right relative z-10">
                           {new Date(message.timestamp).toLocaleTimeString([], {
-                            hour: "2-digit",
-                            minute: "2-digit",
+                            hour: '2-digit',
+                            minute: '2-digit',
                           })}
                         </span>
                       </div>
@@ -296,7 +297,9 @@ const NusaInfoModule = ({
                 {isLoading && (
                   <div className="flex items-center gap-2 p-3 rounded-xl bg-gradient-to-r from-slate-100 to-slate-200 mr-auto max-w-[90%] rounded-tl-none border border-emerald-300/40">
                     <Loader2 className="h-3 w-3 animate-spin text-blue-600" />
-                    <span className="text-slate-600 text-sm">NusaInfo sedang mengetik...</span>
+                    <span className="text-slate-600 text-sm">
+                      NusaInfo sedang mengetik...
+                    </span>
                   </div>
                 )}
                 <div ref={messagesEndRef} />
