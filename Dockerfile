@@ -1,4 +1,4 @@
-FROM node:20-alpine
+FROM node:20-slim
 
 # Define build arguments for NEXT_PUBLIC variables
 ARG NEXT_PUBLIC_FIREBASE_API_KEY
