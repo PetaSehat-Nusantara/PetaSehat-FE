@@ -1,4 +1,8 @@
-FROM node:20-alpine
+# Use a glibc-based Node.js image
+FROM node:20-slim
+
+# Install pnpm
+RUN npm install -g pnpm
 
 # Define build arguments for NEXT_PUBLIC variables
 ARG NEXT_PUBLIC_FIREBASE_API_KEY
@@ -9,26 +13,25 @@ ARG NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
 ARG NEXT_PUBLIC_FIREBASE_APP_ID
 ARG NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
 
-# Set environment variables from build arguments (for access during build)
-ENV NEXT_PUBLIC_FIREBASE_API_KEY=$NEXT_PUBLIC_FIREBASE_API_KEY
-ENV NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=$NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
-ENV NEXT_PUBLIC_FIREBASE_PROJECT_ID=$NEXT_PUBLIC_FIREBASE_PROJECT_ID
-ENV NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=$NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
-ENV NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=$NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
-ENV NEXT_PUBLIC_FIREBASE_APP_ID=$NEXT_PUBLIC_FIREBASE_APP_ID
-ENV NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=$NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
-
 WORKDIR /app
 
-COPY package*.json ./
-RUN npm ci
+# Copy package.json and pnpm-lock.yaml
+COPY package.json pnpm-lock.yaml ./
 
+# Create the missing directory needed for install
+RUN mkdir -p /app/dataconnect-generated/js/default-connector
+
+# Install dependencies using pnpm
+RUN pnpm install --frozen-lockfile
+
+# Copy the rest of the application code
 COPY . .
 
-# Build the Next.js app (now with NEXT_PUBLIC env vars available)
-RUN npm run build
+# Build the Next.js application
+RUN pnpm run build
 
+# Expose the port your Next.js app listens on
 EXPOSE 3000
 
-# The FIREBASE_ variables are injected at runtime by the docker run command
-CMD ["npm", "start"]
+# The runtime variables (including secrets) are injected by the docker run command
+CMD ["pnpm", "start"]

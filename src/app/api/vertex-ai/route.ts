@@ -107,7 +107,7 @@ export async function POST(req: NextRequest) {
 
   Jika diperlukan, berikan konteks tambahan atau ajakan diskusi lanjutan yang menunjukkan empati dan keterbukaan, tanpa menggurui.
 
-  Data referensi yang dapat kamu gunakan:
+  Data referensi yang dapat kamu gunakan, jika terlalu melengsend dari refrensi yang diberikan dalam hal ini terlalu keluar ke konsep kesehatan, hindari aja menjawab dan berkata bukan bagian penalranmu:
   ${context}
 
   Pertanyaan dari pengguna:
