@@ -71,6 +71,11 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no $GCP_VM_USER@$GCP_VM_HOST bash << 'EOF'
 
+            set -e
+
+            echo "GCP_PROJECT_ID: ${GCP_PROJECT_ID}"
+            echo "Image: gcr.io/${GCP_PROJECT_ID}/next-app:latest"
+
             # Pull latest Next.js image
             docker pull gcr.io/${GCP_PROJECT_ID}/next-app:latest
 
@@ -95,18 +100,15 @@ jobs:
               -e PINECONE_INDEX_NAME="${PINECONE_INDEX_NAME}" \
               gcr.io/${GCP_PROJECT_ID}/next-app:latest
 
-            # Create Caddyfile with domain config
-            cat << 'CADDYFILE' > /etc/caddy/Caddyfile
-            www.petasehat.site, petasehat.site {
+            # Update the Caddy configuration using sudo with the -n flag
+            echo "www.petasehat.site, petasehat.site {
                 reverse_proxy localhost:3000
-                encode gzip
 
                 @static {
                     path /_next/static/*
                     path /public/*
                 }
-            }
-            CADDYFILE
+            }" | sudo -n tee /etc/caddy/Caddyfile > /dev/null
 
             # Reload Caddy to apply the new configuration
             sudo -n systemctl reload caddy || sudo -n caddy reload
