@@ -297,21 +297,19 @@ const NusaSimulasiModule = () => {
           <div className={cn("flex-1 transition-all duration-300", isNusaInfoExpanded ? "mr-80" : "mr-16")}>
             <div className="p-6">
               {/* Tab Navigation */}
-              <div className="flex space-x-4 mb-6">
-                <Button
-                  variant={activeTab === "finansial" ? "default" : "outline"}
+              <div className="flex mb-6 gap-0.5 bg-slate-200 rounded-xl">
+                <button
                   onClick={() => setActiveTab("finansial")}
                   className={cn(
-                    "px-8 py-3 rounded-xl transition-all duration-300 w-1/2",
+                    "px-4 py-2 rounded-xl transition-all duration-300 w-1/2 bg-[#fff]",
                     activeTab === "finansial"
-                      ? "bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg"
-                      : "border-emerald-200 text-emerald-700 hover:bg-emerald-50",
+                      ? ""
+                      : "border-2 border-emerald-700 shadow-lg",
                   )}
                 >
-                  Finansial
-                </Button>
-                <Button
-                  variant={activeTab === "demand" ? "default" : "outline"}
+                  <p className="bg-gradient-to-br from-emerald-700 via-emerald-500 to-blue-400 text-transparent bg-clip-text text-lg font-semibold">Finansial</p>
+                </button>
+                <button
                   onClick={() => setActiveTab("demand")}
                   className={cn(
                     "px-8 py-3 rounded-xl transition-all duration-300 w-1/2",
@@ -321,7 +319,7 @@ const NusaSimulasiModule = () => {
                   )}
                 >
                   Demand & Operasional
-                </Button>
+                </button>
               </div>
 
               {/* Chart Section */}
