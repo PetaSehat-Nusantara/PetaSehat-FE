@@ -101,7 +101,7 @@ jobs:
               -e PINECONE_ENVIRONMENT="${PINECONE_ENVIRONMENT}" \
               -e PINECONE_INDEX_NAME="${PINECONE_INDEX_NAME}" \
               -e NEXT_PUBLIC_GOOGLE_MAPS_API_KEY="${NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}" \
-              -e BACKEND_API="${BACKEND_API}"
+              -e BACKEND_API="${BACKEND_API}" \
               gcr.io/${GCP_PROJECT_ID}/next-app:latest
 
             # Update the Caddy configuration using sudo with the -n flag
