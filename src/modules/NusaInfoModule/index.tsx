@@ -1,13 +1,13 @@
 "use client"
 
 import type React from "react"
-
 import { useState, useRef, useEffect } from "react"
 import { Send, Bot, ChevronDown, ChevronUp, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
+import ReactMarkdown from "react-markdown"
 
 type Message = {
   id: string
@@ -203,21 +203,50 @@ const NusaInfoModule = ({
                     )}
                   >
                     {/* Background animation for assistant messages */}
-                    {message.role === "assistant" && !message.isError && (
-                      <div className="absolute inset-0 bg-gradient-to-r from-emerald-200/30 to-blue-200/30 opacity-0 hover:opacity-100 transition-opacity duration-300" />
+                    {message.role === "assistant" && !message.isError ? (
+                      <div className={cn(
+                        "relative z-10 text-slate-700",
+                        "prose prose-sm max-w-none prose-p:mb-2 prose-li:mb-1 prose-strong:text-emerald-700 prose-em:text-blue-700"
+                      )}>
+                        <ReactMarkdown
+                        components={{
+                          ul: (props) => (
+                            <ul className="list-disc pl-5 my-2" {...props} />
+                          ),
+                          ol: (props) => (
+                            <ol className="list-decimal pl-5 my-2" {...props} />
+                          ),
+                          li: (props) => (
+                            <li className="mb-1" {...props} />
+                          ),
+                          strong: (props) => (
+                            <strong className="font-semibold text-emerald-700" {...props} />
+                          ),
+                          em: (props) => (
+                            <em className="italic text-blue-700" {...props} />
+                          ),
+                          p: (props) => (
+                            <p className="mb-2" {...props} />
+                          ),
+                        }}
+                      >
+                        {message.content}
+                      </ReactMarkdown>
+                      </div>
+                    ) : (
+                      <span
+                        className={cn(
+                          "relative z-10",
+                          message.role === "user"
+                            ? "text-slate-800"
+                            : message.isError
+                            ? "text-red-700 font-semibold"
+                            : "text-slate-700"
+                        )}
+                      >
+                        {message.content}
+                      </span>
                     )}
-                    <span
-                      className={cn(
-                        "relative z-10",
-                        message.role === "user"
-                          ? "text-slate-800"
-                          : message.isError
-                          ? "text-red-700 font-semibold"
-                          : "text-slate-700"
-                      )}
-                    >
-                      {message.content}
-                    </span>
                     <span className="text-[10px] text-slate-500 mt-2 block text-right relative z-10">
                       {new Date(message.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                     </span>

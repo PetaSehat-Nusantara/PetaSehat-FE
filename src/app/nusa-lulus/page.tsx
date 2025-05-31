@@ -1,8 +1,6 @@
 import NusaLulusModule from '@/modules/NusaLulusModule';
 
-export default function ChatModule() {
-  // const user = useAuthUser();
-  // console.log(user);
+export default async function NusaLulusPage() {
 
   return <NusaLulusModule />;
 }
