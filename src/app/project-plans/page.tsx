@@ -2,6 +2,7 @@
 
 import { useAuthUser } from "@/hooks/use-auth-user";
 import { useState } from "react";
+import LoadingComponent from '@/components/elements/LoadingComponent';
 
 export default function ProjectPlanDemo() {
   const { user, loading } = useAuthUser();
@@ -31,7 +32,7 @@ export default function ProjectPlanDemo() {
     fetchPlans();
   };
 
-  if (loading) return <div>Loading user...</div>;
+  if (loading) return <LoadingComponent />;
   if (!user) return <div>Silakan login untuk mengelola project plan.</div>;
 
   return (

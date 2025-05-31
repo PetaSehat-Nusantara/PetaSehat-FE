@@ -36,8 +36,5 @@ export async function ingestPDFtoPinecone(
         },
       },
     ]);
-    console.log(`✅ Ingested ${metadata.judul} chunk ${i + 1}/${chunks.length}`);
   }
-
-  console.log(`🚀 PDF ${metadata.judul} selesai di-ingest ke Pinecone!`);
 }

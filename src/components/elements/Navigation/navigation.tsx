@@ -8,12 +8,6 @@ import {
   Search,
   BookOpen,
   GraduationCap,
-  HelpCircle,
-  Instagram,
-  Twitter,
-  Youtube,
-  Facebook,
-  Linkedin,
   LogIn,
 } from "lucide-react"
 import Link from "next/link"
@@ -21,7 +15,7 @@ import { useState } from "react"
 import { usePathname } from "next/navigation"
 
 import { Button } from "@/components/ui/button"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { SidebarProvider } from "@/components/ui/sidebar"
 import ModuleTransition from "../ModulTransition"
 import type { SidebarLayoutProps } from "./interface"
@@ -70,9 +64,6 @@ function AppNavbarWithSidebar() {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-48 border-ocean-100">
-          <DropdownMenuItem className="hover:bg-ocean-50 transition-colors">Profile</DropdownMenuItem>
-          <DropdownMenuItem className="hover:bg-ocean-50 transition-colors">Settings</DropdownMenuItem>
-          <DropdownMenuItem className="hover:bg-ocean-50 transition-colors">Help</DropdownMenuItem>
           <SignOut />
         </DropdownMenuContent>
       </DropdownMenu>
@@ -150,12 +141,12 @@ export function AppSidebar() {
       icon: GraduationCap,
       matchPaths: ["/nusa-lulus"], // NusaLulus routes
     },
-    {
-      title: "Bantuan",
-      url: "/bantuan",
-      icon: HelpCircle,
-      matchPaths: ["/bantuan"], // Help routes
-    },
+    // {
+    //   title: "Bantuan",
+    //   url: "/bantuan",
+    //   icon: HelpCircle,
+    //   matchPaths: ["/bantuan"], // Help routes
+    // },
   ]
 
   // Function to check if a menu item is active
@@ -282,41 +273,6 @@ export function AppSidebar() {
   )
 }
 
-// --- Footer ---
-export function AppFooter() {
-  return (
-    <footer className="border-t border-ocean-100 bg-gradient-to-r from-ocean-50/50 to-grass-50/50 transition-all duration-300 w-full">
-      <div className="flex items-center justify-between px-6 py-4">
-        <div className="flex items-center gap-2 group">
-          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-ocean-grass-gradient shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
-            <span className="text-sm font-bold text-white">P</span>
-          </div>
-          <span className="text-lg font-semibold bg-gradient-to-r from-ocean-600 to-grass-600 bg-clip-text text-transparent">
-            PetaSehat
-          </span>
-        </div>
-
-        <div className="flex items-center gap-4">
-          <span className="text-sm text-slate-600">© 2026 DDOS. All rights reserved.</span>
-
-          <div className="flex items-center gap-3">
-            {[Instagram, Twitter, Youtube, Facebook, Linkedin].map((Icon, index) => (
-              <Link
-                key={index}
-                href="#"
-                className="text-slate-400 hover:text-ocean-600 transition-all duration-300 hover:scale-125 hover:rotate-12"
-                aria-label={Icon.name}
-              >
-                <Icon className="h-5 w-5" />
-              </Link>
-            ))}
-          </div>
-        </div>
-      </div>
-    </footer>
-  )
-}
-
 // --- Layout with Sidebar ---
 function SidebarLayoutWithSidebar({ children }: SidebarLayoutProps) {
   const { collapsed } = useSidebarCollapse()
@@ -336,7 +292,6 @@ function SidebarLayoutWithSidebar({ children }: SidebarLayoutProps) {
         <main className="flex-1 w-full">
           <ModuleTransition>{children}</ModuleTransition>
         </main>
-        <AppFooter />
       </div>
     </div>
   )
@@ -353,7 +308,6 @@ const SidebarLayout = ({ children }: SidebarLayoutProps) => {
         <main className="flex-1">
           <ModuleTransition>{children}</ModuleTransition>
         </main>
-        <AppFooter />
       </div>
     )
   }

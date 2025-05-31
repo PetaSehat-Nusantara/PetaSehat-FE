@@ -93,8 +93,6 @@ ${context}
   let response: unknown;
   try {
     response = await llm.invoke(prompt);
-    // Log untuk debugging
-    console.log("AI response raw:", response);
   } catch {
     return new Response(
       JSON.stringify({ error: "Gagal mendapatkan jawaban dari AI." }),
