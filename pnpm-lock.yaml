@@ -59,6 +59,9 @@ importers:
       cookie:
         specifier: ^1.0.2
         version: 1.0.2
+      dotenv:
+        specifier: ^16.5.0
+        version: 16.5.0
       firebase:
         specifier: ^11.8.1
         version: 11.8.1
