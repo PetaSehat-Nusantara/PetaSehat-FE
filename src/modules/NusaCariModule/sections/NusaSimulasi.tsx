@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { Line } from "react-chartjs-2";
+// import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -100,120 +100,120 @@ const NusaSimulasiDashboard: React.FC = () => {
   const [activeSubTab, setActiveSubTab] = useState("Pendapatan");
   const [activeTimeframe, setActiveTimeframe] = useState("1Y");
 
-  // Chart Data
-  const revenueChartData = {
-    labels: ["2026", "2027", "2028", "2029", "2030", "2031"],
-    datasets: [
-      {
-        label: "Total Pendapatan (Commulative)",
-        data: [100, 120, 150, 180, 210, 250],
-        borderColor: "rgb(20, 184, 166)",
-        backgroundColor: "rgba(20, 184, 166, 0.1)",
-        tension: 0.1,
-        fill: true,
-        pointRadius: 3,
-        pointBackgroundColor: "rgb(20, 184, 166)",
-      },
-      {
-        label: "Rawat Inap",
-        data: [50, 60, 75, 90, 105, 125],
-        borderColor: "rgb(59, 130, 246)",
-        backgroundColor: "rgba(59, 130, 246, 0.5)",
-        tension: 0.1,
-        fill: false,
-        pointRadius: 3,
-        pointBackgroundColor: "rgb(59, 130, 246)",
-      },
-      {
-        label: "Rawat Jalan",
-        data: [30, 40, 50, 60, 70, 80],
-        borderColor: "rgb(107, 114, 128)",
-        backgroundColor: "rgba(107, 114, 128, 0.5)",
-        tension: 0.1,
-        fill: false,
-        pointRadius: 3,
-        pointBackgroundColor: "rgb(107, 114, 128)",
-      },
-      {
-        label: "Layanan Unggulan",
-        data: [20, 25, 35, 45, 55, 65],
-        borderColor: "rgb(239, 68, 68)",
-        backgroundColor: "rgba(239, 68, 68, 0.5)",
-        tension: 0.1,
-        fill: false,
-        pointRadius: 3,
-        pointBackgroundColor: "rgb(239, 68, 68)",
-      },
-    ],
-  };
-
-  const chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    layout: {
-      padding: { right: 0, left: 0, top: 0, bottom: 0 },
-    },
-    scales: {
-      y: {
-        beginAtZero: false,
-        min: 50,
-        max: 300,
-        ticks: {
-          stepSize: 50,
-          color: "#6b7280",
-          font: { size: 10 },
-        },
-        grid: { color: "#e5e7eb" },
-        title: {
-          display: true,
-          text: "Miliar Rupiah",
-          color: "#6b7280",
-          font: { size: 10, weight: "normal" },
-          padding: { bottom: 0, top: -5 },
-        },
-      },
-      x: {
-        ticks: {
-          color: "#6b7280",
-          font: { size: 10 },
-        },
-        grid: { display: false },
-        title: {
-          display: true,
-          text: "Tahun",
-          color: "#6b7280",
-          font: { size: 10, weight: "normal" },
-          padding: { top: 5 },
-        },
-      },
-    },
-    plugins: {
-      legend: {
-        display: true,
-        position: "top" as const,
-        align: "start" as const,
-        labels: {
-          boxWidth: 10,
-          boxHeight: 10,
-          padding: 10,
-          color: "#374151",
-          font: { size: 10 },
-          usePointStyle: true,
-          pointStyle: "circle",
-        },
-      },
-      tooltip: {
-        backgroundColor: "#374151",
-        titleFont: { size: 12 },
-        bodyFont: { size: 10 },
-        padding: 10,
-        cornerRadius: 4,
-      },
-    },
-    elements: {
-      line: { borderWidth: 2 },
-    },
-  };
+  // // Chart Data
+  // const revenueChartData = {
+  //   labels: ["2026", "2027", "2028", "2029", "2030", "2031"],
+  //   datasets: [
+  //     {
+  //       label: "Total Pendapatan (Commulative)",
+  //       data: [100, 120, 150, 180, 210, 250],
+  //       borderColor: "rgb(20, 184, 166)",
+  //       backgroundColor: "rgba(20, 184, 166, 0.1)",
+  //       tension: 0.1,
+  //       fill: true,
+  //       pointRadius: 3,
+  //       pointBackgroundColor: "rgb(20, 184, 166)",
+  //     },
+  //     {
+  //       label: "Rawat Inap",
+  //       data: [50, 60, 75, 90, 105, 125],
+  //       borderColor: "rgb(59, 130, 246)",
+  //       backgroundColor: "rgba(59, 130, 246, 0.5)",
+  //       tension: 0.1,
+  //       fill: false,
+  //       pointRadius: 3,
+  //       pointBackgroundColor: "rgb(59, 130, 246)",
+  //     },
+  //     {
+  //       label: "Rawat Jalan",
+  //       data: [30, 40, 50, 60, 70, 80],
+  //       borderColor: "rgb(107, 114, 128)",
+  //       backgroundColor: "rgba(107, 114, 128, 0.5)",
+  //       tension: 0.1,
+  //       fill: false,
+  //       pointRadius: 3,
+  //       pointBackgroundColor: "rgb(107, 114, 128)",
+  //     },
+  //     {
+  //       label: "Layanan Unggulan",
+  //       data: [20, 25, 35, 45, 55, 65],
+  //       borderColor: "rgb(239, 68, 68)",
+  //       backgroundColor: "rgba(239, 68, 68, 0.5)",
+  //       tension: 0.1,
+  //       fill: false,
+  //       pointRadius: 3,
+  //       pointBackgroundColor: "rgb(239, 68, 68)",
+  //     },
+  //   ],
+  // };
+  //
+  // const chartOptions = {
+  //   responsive: true,
+  //   maintainAspectRatio: false,
+  //   layout: {
+  //     padding: { right: 0, left: 0, top: 0, bottom: 0 },
+  //   },
+  //   scales: {
+  //     y: {
+  //       beginAtZero: false,
+  //       min: 50,
+  //       max: 300,
+  //       ticks: {
+  //         stepSize: 50,
+  //         color: "#6b7280",
+  //         font: { size: 10 },
+  //       },
+  //       grid: { color: "#e5e7eb" },
+  //       title: {
+  //         display: true,
+  //         text: "Miliar Rupiah",
+  //         color: "#6b7280",
+  //         font: { size: 10, weight: "normal" },
+  //         padding: { bottom: 0, top: -5 },
+  //       },
+  //     },
+  //     x: {
+  //       ticks: {
+  //         color: "#6b7280",
+  //         font: { size: 10 },
+  //       },
+  //       grid: { display: false },
+  //       title: {
+  //         display: true,
+  //         text: "Tahun",
+  //         color: "#6b7280",
+  //         font: { size: 10, weight: "normal" },
+  //         padding: { top: 5 },
+  //       },
+  //     },
+  //   },
+  //   plugins: {
+  //     legend: {
+  //       display: true,
+  //       position: "top" as const,
+  //       align: "start" as const,
+  //       labels: {
+  //         boxWidth: 10,
+  //         boxHeight: 10,
+  //         padding: 10,
+  //         color: "#374151",
+  //         font: { size: 10 },
+  //         usePointStyle: true,
+  //         pointStyle: "circle",
+  //       },
+  //     },
+  //     tooltip: {
+  //       backgroundColor: "#374151",
+  //       titleFont: { size: 12 },
+  //       bodyFont: { size: 10 },
+  //       padding: 10,
+  //       cornerRadius: 4,
+  //     },
+  //   },
+  //   elements: {
+  //     line: { borderWidth: 2 },
+  //   },
+  // };
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-gray-50 p-4 flex gap-4">
@@ -323,7 +323,7 @@ const NusaSimulasiDashboard: React.FC = () => {
               {activeSubTab === "Pendapatan" && (
                 <div className="w-full flex flex-col items-center" style={{ height: "340px" }}>
                   <div className="w-full" style={{ height: "300px" }}>
-                    <Line data={revenueChartData} options={chartOptions} />
+                    {/*<Line data={revenueChartData} options={chartOptions} />*/}
                   </div>
                 </div>
               )}

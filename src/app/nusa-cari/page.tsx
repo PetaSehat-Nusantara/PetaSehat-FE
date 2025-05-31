@@ -1,8 +1,8 @@
-import HomePageModule from '@/modules/HomepageModule';
+import NusaCariModule from '@/modules/NusaCariModule';
 
-export default function Module() {
+export default function NusaCariPage() {
   // const user = useAuthUser();
   // console.log(user);
 
-  return <HomePageModule />;
+  return <NusaCariModule />;
 }

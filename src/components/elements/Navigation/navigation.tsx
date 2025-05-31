@@ -8,8 +8,8 @@ import {
   Search,
   BookOpen,
   GraduationCap,
-  LogIn,
-} from "lucide-react"
+  LogIn, Star,
+} from 'lucide-react';
 import Link from "next/link"
 import { useState } from "react"
 import { usePathname } from "next/navigation"

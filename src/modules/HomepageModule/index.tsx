@@ -3,7 +3,6 @@
 import React from "react"
 import { useState, useEffect, useRef } from "react"
 import {
-  ArrowRight,
   Brain,
   Search,
   BarChart3,
@@ -19,7 +18,6 @@ import {
   Leaf,
 } from "lucide-react"
 
-import { Button } from "@/components/ui/button"
 import SidebarLayout from "@/components/elements/Navigation/navigation"
 import Image from "next/image"
 
@@ -402,15 +400,15 @@ const HomePageModule = () => {
                 efisien, dan inklusif untuk seluruh rakyat Indonesia.
               </p>
 
-              <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-                <Button size="lg" className="bg-white text-green-600 hover:bg-green-50">
-                  <span>Mulai Sekarang</span>
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-                <Button size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white/10">
-                  <span>Jadwalkan Demo</span>
-                </Button>
-              </div>
+              {/*<div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">*/}
+              {/*  <Button size="lg" className="bg-white text-green-600 hover:bg-green-50">*/}
+              {/*    <span>Mulai Sekarang</span>*/}
+              {/*    <ArrowRight className="ml-2 h-5 w-5" />*/}
+              {/*  </Button>*/}
+              {/*  <Button size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white/10">*/}
+              {/*    <span>Jadwalkan Demo</span>*/}
+              {/*  </Button>*/}
+              {/*</div>*/}
 
               <div className="grid md:grid-cols-3 gap-8 pt-12 border-t border-white/20 mt-8">
                 {[
