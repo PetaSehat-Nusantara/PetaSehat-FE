@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { logout } from '@/lib/firebase/auth/auth';
 import { Button } from '@/components/ui/button';
-import router from 'next/router';
+import { redirect } from 'next/navigation';
 
 export default function SignOutButton() {
   const [loading, setLoading] = useState(false);
@@ -15,7 +15,7 @@ export default function SignOutButton() {
     const { error } = await logout();
     setLoading(false);
     if (error) setError(error);
-    router.push("/");
+    redirect("/");
   };
 
   return (

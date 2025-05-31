@@ -8,7 +8,6 @@ import {
   updateProfile,
 } from 'firebase/auth';
 import { auth, db } from '../firebaseClient';
-import Cookies from 'js-cookie';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 function getErrorMessage(error: unknown): string {
@@ -64,7 +63,14 @@ export async function login(email: string, password: string) {
     const user = userCredential.user;
     await ensureUserDocExists(user);
     const token = await getIdToken(user);
-    Cookies.set('token', token, { expires: 1, sameSite: 'strict', secure: true });
+
+    // Call API to set cookie
+    await fetch('/api/set-token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token }),
+    });
+
     return { user };
   } catch (error: unknown) {
     return { error: getErrorMessage(error) };
@@ -78,7 +84,14 @@ export async function register(email: string, password: string, name: string) {
     await updateProfile(user, { displayName: name });
     await ensureUserDocExists(user, name);
     const token = await getIdToken(user);
-    Cookies.set('token', token, { expires: 1, sameSite: 'strict', secure: true });
+
+    // Call API to set cookie
+    await fetch('/api/set-token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token }),
+    });
+
     return { user };
   } catch (error: unknown) {
     return { error: getErrorMessage(error) };
@@ -92,7 +105,14 @@ export async function loginWithGoogle() {
     const user = userCredential.user;
     await ensureUserDocExists(user);
     const token = await getIdToken(user);
-    Cookies.set('token', token, { expires: 1, sameSite: 'strict', secure: true });
+
+    // Call API to set cookie
+    await fetch('/api/set-token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token }),
+    });
+
     return { user };
   } catch (error: unknown) {
     return { error: getErrorMessage(error) };
@@ -102,7 +122,14 @@ export async function loginWithGoogle() {
 export async function logout() {
   try {
     await signOut(auth);
-    Cookies.remove('token');
+
+    // Call API to remove cookie
+    await fetch('/api/logout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: '' }),
+    });
+
     return { success: true };
   } catch (error: unknown) {
     return { error: getErrorMessage(error) };

@@ -8,6 +8,8 @@ import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
 import { cn } from "@/lib/utils"
 import SidebarLayout from "@/components/elements/Navigation/navigation"
+import { useAuthUser } from "@/hooks/use-auth-user"
+import { redirect } from "next/navigation"
 
 type DocumentItem = {
   id: string
@@ -23,6 +25,11 @@ type DocumentItem = {
 }
 
 const NusaLulusModule = () => {
+    const user = useAuthUser();
+    if(!user){
+        redirect("/");
+    }
+    
   const [selectedDocuments, setSelectedDocuments] = useState<string[]>([])
   const [activeCategory, setActiveCategory] = useState<string>("all")
 
