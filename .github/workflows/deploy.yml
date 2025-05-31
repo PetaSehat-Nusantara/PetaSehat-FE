@@ -35,11 +35,11 @@ jobs:
             --build-arg NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=${{ secrets.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID }} \
             --build-arg NEXT_PUBLIC_FIREBASE_APP_ID=${{ secrets.NEXT_PUBLIC_FIREBASE_APP_ID }} \
             --build-arg NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=${{ secrets.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID }} \
-            -t gcr.io/petasehat/next-app:latest .
+            -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/next-app:latest .
 
       - name: Push Docker image
         run: |
-          docker push gcr.io/petasehat/next-app:latest
+          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/next-app:latest
 
       - name: Set up SSH key
         run: |
@@ -50,7 +50,7 @@ jobs:
 
       - name: Deploy Docker container and Caddy on GCP VM
         env:
-          GCP_PROJECT_ID: petasehat
+          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
           GCP_VM_USER: ${{ secrets.GCP_VM_USER }}
           GCP_VM_HOST: ${{ secrets.GCP_VM_HOST }}
           NEXT_PUBLIC_FIREBASE_API_KEY: ${{ secrets.NEXT_PUBLIC_FIREBASE_API_KEY }}
@@ -69,15 +69,15 @@ jobs:
           PINECONE_ENVIRONMENT: ${{ secrets.PINECONE_ENVIRONMENT }}
           PINECONE_INDEX_NAME: ${{ secrets.PINECONE_INDEX_NAME }}
         run: |
-          ssh -o StrictHostKeyChecking=no $GCP_VM_USER@$GCP_VM_HOST bash << 'EOF'
+          ssh -o StrictHostKeyChecking=no $GCP_VM_USER@$GCP_VM_HOST bash <<EOF
 
             set -e
 
-            echo "GCP_PROJECT_ID: petasehat"
-            echo "Image: gcr.io/petasehat/next-app:latest"
+            echo "GCP_PROJECT_ID: ${GCP_PROJECT_ID}"
+            echo "Image: gcr.io/${GCP_PROJECT_ID}/next-app:latest"
 
             # Pull latest Next.js image
-            docker pull gcr.io/petasehat/next-app:latest
+            docker pull gcr.io/${GCP_PROJECT_ID}/next-app:latest
 
             # Remove existing Next.js container if running
             docker rm -f next-app || true
@@ -98,7 +98,7 @@ jobs:
               -e PINECONE_API_KEY="${PINECONE_API_KEY}" \
               -e PINECONE_ENVIRONMENT="${PINECONE_ENVIRONMENT}" \
               -e PINECONE_INDEX_NAME="${PINECONE_INDEX_NAME}" \
-              gcr.io/petasehat/next-app:latest
+              gcr.io/${GCP_PROJECT_ID}/next-app:latest
 
             # Update the Caddy configuration using sudo with the -n flag
             echo "www.petasehat.site, petasehat.site {
