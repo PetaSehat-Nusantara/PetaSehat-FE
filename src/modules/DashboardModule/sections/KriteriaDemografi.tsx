@@ -26,7 +26,7 @@ const formSchema = z.object({
     .default([]),
 });
 
-type FormSchema = z.infer<typeof formSchema>;
+export type FormSchema = z.infer<typeof formSchema>;
 
 const demografiOptions = [
   'Keluarga dengan anak kecil',

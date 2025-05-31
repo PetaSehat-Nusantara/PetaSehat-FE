@@ -127,6 +127,7 @@ interface LokasiLahanProps {
 const LokasiLahan: React.FC<LokasiLahanProps> = ({
   initialData = {},
   onSubmit,
+  onPrev,
 }) => {
   const [selectedMarker, setSelectedMarker] = useState<PropertyMarker | null>(
     null
@@ -563,7 +564,29 @@ const LokasiLahan: React.FC<LokasiLahanProps> = ({
           </div>
 
           {/* Submit Button */}
-          <div className="flex justify-end">
+          <div className="flex justify-between">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onPrev}
+              className="px-6 py-2 rounded-lg"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={2.5}
+                stroke="currentColor"
+                className="w-5 h-5 mr-2"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M15.75 19.5 8.25 12l7.5-7.5"
+                />
+              </svg>
+              Kembali
+            </Button>
             <Button
               type="submit"
               className="bg-teal-600 hover:bg-teal-700 text-white px-8"
