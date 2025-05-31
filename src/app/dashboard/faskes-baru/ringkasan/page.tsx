@@ -28,7 +28,7 @@ const GoogleMap = () => {
     if (!loaded) {
       const script = document.createElement("script")
       script.src =
-        `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`
+        `https://maps.googleapis.com/maps/api/js?key=AIzaSyDSbuVcqlsylwylSN3EPwUO0NHnIsF_dOg&libraries=places`
       script.async = true
       script.defer = true
       script.onload = () => {

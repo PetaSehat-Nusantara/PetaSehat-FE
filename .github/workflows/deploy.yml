@@ -106,13 +106,17 @@ jobs:
 
             # Update the Caddy configuration using sudo with the -n flag
             echo "www.petasehat.site, petasehat.site {
-                reverse_proxy localhost:3000
-
-                @static {
-                    path /_next/static/*
-                    path /public/*
+                  reverse_proxy localhost:3000
+            
+                  @static {
+                  path /_next/static/*
+                  path /public/*
                 }
-            }" | sudo -n tee /etc/caddy/Caddyfile > /dev/null
+            }
+  
+            www.api.petasehat.site, api.petasehat.site {
+            reverse_proxy localhost:8000
+          }" | sudo -n tee /etc/caddy/Caddyfile > /dev/null
 
             # Reload Caddy to apply the new configuration
             sudo -n systemctl reload caddy || sudo -n caddy reload
