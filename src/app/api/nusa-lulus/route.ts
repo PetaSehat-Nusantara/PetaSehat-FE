@@ -2,6 +2,15 @@ import { NextRequest } from "next/server";
 import { getPineconeVectorStore } from "@/lib/vector-store";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 
+function cleanJsonString(str: string): string {
+  // Remove code block markers if present
+  return str
+    .replace(/^```json\s*/i, "")
+    .replace(/^```\s*/i, "")
+    .replace(/```$/i, "")
+    .trim();
+}
+
 export async function POST(req: NextRequest) {
   let body: { provinsi?: string } | undefined;
   try {
@@ -27,7 +36,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // 2. Cari chunk relevan (top 10)
+  // 2. Cari chunk relevan (top 5)
   let results;
   try {
     results = await vectorStore.similaritySearch(query, 5);
@@ -74,6 +83,7 @@ ${context}
   let response: unknown;
   try {
     response = await llm.invoke(prompt);
+    console.log(`respose + ${response}`);
   } catch {
     return new Response(
       JSON.stringify({ error: "Gagal mendapatkan jawaban dari AI." }),
@@ -106,22 +116,32 @@ ${context}
     }
   }
 
+  // Clean code block and extract JSON array
+  contentStr = cleanJsonString(contentStr);
+
+  // Try to find the array
   const match = contentStr.match(/\[([\s\S]*?)\]/);
   let documents: unknown[] = [];
   if (match) {
     try {
       documents = JSON.parse(match[0]);
     } catch {
+      console.log(`pengformatan   ${match}`);
       return new Response(
         JSON.stringify({ error: "Format data tidak valid." }),
         { status: 500, headers: { "Content-Type": "application/json" } }
       );
     }
   } else {
-    return new Response(
-      JSON.stringify({ error: "AI tidak mengembalikan data dokumen." }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
-    );
+    // Try to parse the whole string as array
+    try {
+      documents = JSON.parse(contentStr);
+    } catch {
+      return new Response(
+        JSON.stringify({ error: "AI tidak mengembalikan data dokumen." }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
+    }
   }
 
   return new Response(JSON.stringify({ documents }), {

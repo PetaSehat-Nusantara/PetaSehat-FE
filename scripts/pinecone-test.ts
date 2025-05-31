@@ -1,4 +1,4 @@
-import 'dotenv/config';
-import { testPinecone } from '../src/lib/pinecone-test';
+// import 'dotenv/config';
+// import { testPinecone } from '../src/lib/pinecone-test';
 
-testPinecone();
+// testPinecone();

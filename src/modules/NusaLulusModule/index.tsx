@@ -40,23 +40,33 @@ const NusaLulusModule = () => {
 
   useEffect(() => {
     setLoadingDocs(true)
+    setErrorDocs(null)
+    setDocuments([])
     fetch("/api/nusa-lulus", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ provinsi }),
     })
-      .then(res => res.json())
+      .then(async (res) => {
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}))
+          throw new Error(data.error || "Gagal memuat data dokumen.")
+        }
+        return res.json()
+      })
       .then(data => {
-        if (data.documents) {
+        if (Array.isArray(data.documents)) {
           setDocuments(data.documents)
           setErrorDocs(null)
         } else {
+          setDocuments([])
           setErrorDocs(data.error || "Gagal memuat data dokumen.")
         }
         setLoadingDocs(false)
       })
-      .catch(() => {
-        setErrorDocs("Gagal memuat data dokumen.")
+      .catch((err) => {
+        setDocuments([])
+        setErrorDocs(err.message || "Gagal memuat data dokumen.")
         setLoadingDocs(false)
       })
   }, [provinsi])
@@ -112,11 +122,15 @@ const NusaLulusModule = () => {
           </select>
         </div>
 
-        {/* Loading/Error */}
+        {/* Loading/Error/Empty */}
         {loadingDocs ? (
           <div className="text-center text-slate-500 py-8">Memuat data dokumen...</div>
         ) : errorDocs ? (
           <div className="text-center text-red-500 py-8">{errorDocs}</div>
+        ) : documents.length === 0 ? (
+          <div className="text-center text-slate-500 py-8">
+            Tidak ada dokumen ditemukan untuk provinsi ini.
+          </div>
         ) : (
           <>
             {/* Category Filter */}
