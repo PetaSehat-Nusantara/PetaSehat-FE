@@ -157,8 +157,8 @@ export default function DashboardModule() {
   );
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-gray-50 p-4 flex gap-4">
-      <div className="mx-auto w-full">
+    <div className="bg-gray-50 p-4 flex gap-4">
+      <div className="w-fit">
         <div className="py-6 w-full flex flex-col gap-2">
           <h1 className="text-4xl font-bold primary-gradient-text">
             Fasilitas Kesehatan Baru
@@ -167,7 +167,7 @@ export default function DashboardModule() {
         </div>
         {isLoading ? <LoadingPage /> : renderCurrentStep()}
       </div>
-      <SideNusaInfo />
+      {/* <SideNusaInfo /> */}
     </div>
   );
 }

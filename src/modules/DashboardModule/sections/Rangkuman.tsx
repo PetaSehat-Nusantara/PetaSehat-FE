@@ -1,4 +1,5 @@
 'use client';
+import SideNusaInfo from '@/modules/NusaInfoModule/sections/SideNusaInfo';
 import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
 import { useCallback, useMemo, useState } from 'react';
 
@@ -163,9 +164,54 @@ export const Rangkuman = ({}: Props) => {
           <div className="bg-gray-50 rounded-lg p-4">
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-teal-500 flex items-center justify-center">
-                  <div className="w-6 h-6 rounded-full border-4 border-white border-t-transparent animate-spin"></div>
-                </div>
+                <svg
+                  width="35"
+                  height="35"
+                  viewBox="0 0 36 36"
+                  className="mx-auto"
+                >
+                  <defs>
+                    <linearGradient
+                      id="donutGradient"
+                      x1="0%"
+                      y1="0%"
+                      x2="100%"
+                      y2="0%"
+                    >
+                      {/* Atur warna gradien Anda di sini */}
+                      {/* Contoh dari gambar: hijau ke biru */}
+                      <stop offset="0%" stop-color="#10B981" />{' '}
+                      {/* Tailwind green-500 */}
+                      <stop offset="100%" stop-color="#3B82F6" />{' '}
+                      {/* Tailwind blue-500 */}
+                    </linearGradient>
+                  </defs>
+
+                  {/* 1. Lingkaran Latar Belakang (Track) */}
+                  <path
+                    d="M18 2.0845
+       a 15.9155 15.9155 0 0 1 0 31.831
+       a 15.9155 15.9155 0 0 1 0 -31.831"
+                    fill="none"
+                    stroke="#e5e7eb" /* Tailwind gray-200 atau warna track yang diinginkan */
+                    stroke-width="3" /* Ketebalan donut */
+                  />
+                  <path
+                    d="M18 2.0845
+       a 15.9155 15.9155 0 0 1 0 31.831
+       a 15.9155 15.9155 0 0 1 0 -31.831"
+                    fill="none"
+                    stroke="url(#donutGradient)" /* Menggunakan gradient yang sudah didefinisikan */
+                    stroke-width="3" /* Ketebalan yang sama dengan track */
+                    stroke-linecap="round" /* Membuat ujung arc membulat */
+                    stroke-dasharray={`${92}, 100`} /* Mengisi 75% dari total (100). 75 terisi, 25 kosong (sisanya) */
+                    transform="rotate(-90 18 18)" /* Memulai arc dari atas (jam 12) */
+                  />
+
+                  {/* (Opsional) Teks di tengah donut jika diperlukan */}
+                  {/* <text x="18" y="20.5" text-anchor="middle" font-size="6px" fill="#333">75%</text> */}
+                </svg>
+
                 <span className="text-2xl font-bold primary-gradient-text">
                   92%
                 </span>
@@ -174,21 +220,6 @@ export const Rangkuman = ({}: Props) => {
                 Kecocokan dengan kriteria yang kamu berikan, beberapa perbaikan
                 dapat ditinjau
               </span>
-              <button className="ml-auto">
-                <svg
-                  className="w-5 h-5 text-gray-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
-              </button>
             </div>
           </div>
 
@@ -198,19 +229,6 @@ export const Rangkuman = ({}: Props) => {
             <div className="bg-white border border-gray-200 rounded-xl p-4">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-semibold text-gray-800">Poin Unggul</h3>
-                <svg
-                  className="w-5 h-5 text-gray-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
               </div>
               <div className="space-y-3">
                 <div className="flex items-start gap-3">
@@ -258,19 +276,6 @@ export const Rangkuman = ({}: Props) => {
             <div className="bg-white border border-gray-200 rounded-xl p-4">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-semibold text-gray-800">Poin Perhatian</h3>
-                <svg
-                  className="w-5 h-5 text-gray-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
               </div>
               <div className="space-y-3">
                 <div className="flex items-start gap-3">
@@ -311,19 +316,6 @@ export const Rangkuman = ({}: Props) => {
                   <h3 className="font-semibold text-gray-800">
                     Estimasi Biaya Konstruksi
                   </h3>
-                  <svg
-                    className="w-5 h-5 text-gray-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
                 </div>
                 <div className="mt-2">
                   <span className="text-2xl font-bold primary-gradient-text">
@@ -345,19 +337,6 @@ export const Rangkuman = ({}: Props) => {
                   <h3 className="font-semibold text-gray-800">
                     Estimasi Waktu Pembangunan
                   </h3>
-                  <svg
-                    className="w-5 h-5 text-gray-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
                 </div>
                 <div className="mt-2">
                   <span className="text-2xl font-bold primary-gradient-text">
@@ -371,112 +350,100 @@ export const Rangkuman = ({}: Props) => {
                 </span>
               </div>
             </div>
-          </div>
 
-          {/* ROI Chart */}
-          <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-            <div className="p-4 border-b border-gray-200">
-              <div className="flex items-center justify-between">
-                <h3 className="font-semibold text-gray-800">
-                  Estimasi Return on Investment (ROI)
-                </h3>
-                <svg
-                  className="w-5 h-5 text-gray-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
-              </div>
-              <div className="mt-4">
-                <div className="relative h-32">
-                  <svg viewBox="0 0 350 120" className="w-full h-full">
-                    {/* Grid lines */}
-                    {[120, 140, 160, 180, 200, 220].map((y, i) => (
-                      <line
-                        key={i}
-                        x1="40"
-                        y1={120 - (y - 120)}
-                        x2="330"
-                        y2={120 - (y - 120)}
-                        stroke="#f3f4f6"
-                        strokeWidth="1"
+            {/* ROI Chart */}
+            <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+              <div className="p-4 border-b border-gray-200">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-semibold text-gray-800">
+                    Estimasi Return on Investment (ROI)
+                  </h3>
+                </div>
+                <div className="mt-4">
+                  <div className="relative h-32">
+                    <svg viewBox="0 0 350 120" className="w-full h-full">
+                      {/* Grid lines */}
+                      {[120, 140, 160, 180, 200, 220].map((y, i) => (
+                        <line
+                          key={i}
+                          x1="40"
+                          y1={120 - (y - 120)}
+                          x2="330"
+                          y2={120 - (y - 120)}
+                          stroke="#f3f4f6"
+                          strokeWidth="1"
+                        />
+                      ))}
+
+                      {/* Y-axis labels */}
+                      {[120, 140, 160, 180, 200, 220].map((y, i) => (
+                        <text
+                          key={i}
+                          x="30"
+                          y={120 - (y - 120) + 5}
+                          fontSize="10"
+                          fill="#6b7280"
+                          textAnchor="end"
+                        >
+                          {y}
+                        </text>
+                      ))}
+
+                      {/* X-axis labels */}
+                      {chartData.map((point, i) => (
+                        <text
+                          key={i}
+                          x={40 + i * 40}
+                          y="115"
+                          fontSize="10"
+                          fill="#6b7280"
+                          textAnchor="middle"
+                        >
+                          {point.year}
+                        </text>
+                      ))}
+
+                      {/* Gray baseline */}
+                      <polyline
+                        fill="none"
+                        stroke="#9ca3af"
+                        strokeWidth="2"
+                        points={chartData
+                          .map(
+                            (point, i) => `${40 + i * 40},${120 - (180 - 120)}`
+                          )
+                          .join(' ')}
                       />
-                    ))}
 
-                    {/* Y-axis labels */}
-                    {[120, 140, 160, 180, 200, 220].map((y, i) => (
-                      <text
-                        key={i}
-                        x="30"
-                        y={120 - (y - 120) + 5}
-                        fontSize="10"
-                        fill="#6b7280"
-                        textAnchor="end"
-                      >
-                        {y}
-                      </text>
-                    ))}
-
-                    {/* X-axis labels */}
-                    {chartData.map((point, i) => (
-                      <text
-                        key={i}
-                        x={40 + i * 40}
-                        y="115"
-                        fontSize="10"
-                        fill="#6b7280"
-                        textAnchor="middle"
-                      >
-                        {point.year}
-                      </text>
-                    ))}
-
-                    {/* Gray baseline */}
-                    <polyline
-                      fill="none"
-                      stroke="#9ca3af"
-                      strokeWidth="2"
-                      points={chartData
-                        .map(
-                          (point, i) => `${40 + i * 40},${120 - (180 - 120)}`
-                        )
-                        .join(' ')}
-                    />
-
-                    {/* Teal growth line */}
-                    <polyline
-                      fill="none"
-                      stroke="#14b8a6"
-                      strokeWidth="3"
-                      points={chartData
-                        .map(
-                          (point, i) =>
-                            `${40 + i * 40},${120 - (point.value - 120)}`
-                        )
-                        .join(' ')}
-                    />
-                  </svg>
-                  <div className="absolute bottom-0 left-0 text-xs text-gray-500">
-                    (Tahun)
+                      {/* Teal growth line */}
+                      <polyline
+                        fill="none"
+                        stroke="#14b8a6"
+                        strokeWidth="3"
+                        points={chartData
+                          .map(
+                            (point, i) =>
+                              `${40 + i * 40},${120 - (point.value - 120)}`
+                          )
+                          .join(' ')}
+                      />
+                    </svg>
+                    <div className="absolute bottom-0 left-0 text-xs text-gray-500">
+                      (Tahun)
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div className="bg-teal-500 p-3">
-              <span className="text-white text-sm">
-                Mencapai target ROI Anda
-              </span>
+              <div className="bg-teal-500 p-3">
+                <span className="text-white text-sm">
+                  Mencapai target ROI Anda
+                </span>
+              </div>
             </div>
           </div>
         </div>
       </div>
+      <SideNusaInfo />
     </div>
   );
 };
