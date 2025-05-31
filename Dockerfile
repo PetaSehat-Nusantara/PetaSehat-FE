@@ -1,6 +1,9 @@
 # Use a glibc-based Node.js image
 FROM node:20-slim
 
+# Install pnpm
+RUN npm install -g pnpm
+
 # Define build arguments for NEXT_PUBLIC variables
 # These are needed if your Next.js app uses NEXT_PUBLIC variables during the build process
 ARG NEXT_PUBLIC_FIREBASE_API_KEY
@@ -16,22 +19,22 @@ ARG NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
 
 WORKDIR /app
 
-# Copy package.json and package-lock.json (or yarn.lock, etc.)
-COPY package*.json ./
+# Copy package.json and pnpm-lock.yaml
+COPY package.json pnpm-lock.yaml ./
 
-# Install dependencies
-# Using npm ci for reproducible builds. Remove --force.
-RUN npm ci --force
+# Install dependencies using pnpm
+# Using --frozen-lockfile for reproducible builds
+RUN pnpm install --frozen-lockfile
 
 # Copy the rest of the application code
 COPY . .
 
 # Build the Next.js application
 # NEXT_PUBLIC variables are available here from the build arguments
-RUN npm run build
+RUN pnpm run build
 
 # Expose the port your Next.js app listens on
 EXPOSE 3000
 
 # The runtime variables (including secrets) are injected by the docker run command
-CMD ["npm", "start"]
+CMD ["pnpm", "start"]
