@@ -24,9 +24,6 @@ jobs:
           password: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
 
       - name: Build Docker image
-        # Pass ONLY NEXT_PUBLIC variables as build arguments if needed during build.
-        # Runtime secrets like GEMINI_API_KEY are passed as environment variables at runtime.
-        # Use --no-cache-filter for pnpm steps to avoid caching issues with native modules (if needed)
         run: |
           docker build \
             --no-cache-filter "pnpm install --frozen-lockfile" \
@@ -52,12 +49,10 @@ jobs:
           ssh-keyscan -H ${{ secrets.GCP_VM_HOST }} >> ~/.ssh/known_hosts
 
       - name: Deploy Docker container and Caddy on GCP VM
-        # Define environment variables to pass to the SSH session and subsequently to the Docker container
         env:
           GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
           GCP_VM_USER: ${{ secrets.GCP_VM_USER }}
           GCP_VM_HOST: ${{ secrets.GCP_VM_HOST }}
-          # Pass all runtime secrets here
           NEXT_PUBLIC_FIREBASE_API_KEY: ${{ secrets.NEXT_PUBLIC_FIREBASE_API_KEY }}
           NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: ${{ secrets.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN }}
           NEXT_PUBLIC_FIREBASE_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_PROJECT_ID }}
@@ -67,17 +62,14 @@ jobs:
           NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID }}
           FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
           FIREBASE_CLIENT_EMAIL: ${{ secrets.FIREBASE_CLIENT_EMAIL }}
-          # Handle multi-line private key for SSH command
           FIREBASE_PRIVATE_KEY: |
             ${{ secrets.FIREBASE_PRIVATE_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           PINECONE_API_KEY: ${{ secrets.PINECONE_API_KEY }}
           PINECONE_ENVIRONMENT: ${{ secrets.PINECONE_ENVIRONMENT }}
           PINECONE_INDEX_NAME: ${{ secrets.PINECONE_INDEX_NAME }}
-
-
         run: |
-          ssh -o StrictHostKeyChecking=no $GCP_VM_USER@$GCP_VM_HOST bash << 'EOF' # Use 'EOF' to prevent shell variable expansion issues within the SSH command
+          ssh -o StrictHostKeyChecking=no $GCP_VM_USER@$GCP_VM_HOST bash << 'EOF'
 
             # Pull latest Next.js image
             docker pull gcr.io/${GCP_PROJECT_ID}/next-app:latest
@@ -104,7 +96,6 @@ jobs:
               gcr.io/${GCP_PROJECT_ID}/next-app:latest
 
             # Create Caddyfile with domain config
-            # Use single quotes for the EOF marker to prevent interpolation of variables in the Here Document
             cat << 'CADDYFILE' > /etc/caddy/Caddyfile
             www.petasehat.site, petasehat.site {
                 reverse_proxy localhost:3000
@@ -118,18 +109,16 @@ jobs:
             CADDYFILE
 
             # Reload Caddy to apply the new configuration
-            # Using -n with sudo prevents password prompt
             sudo -n systemctl reload caddy || sudo -n caddy reload
 
             # Remove old Caddy container if any
             docker rm -f caddy || true
 
             # Run Caddy container with mounted volumes for certs and config
-            # Mounting the Caddyfile directly from the host path
             docker run -d --name caddy -p 80:80 -p 443:443 \
               -v /etc/caddy/Caddyfile:/etc/caddy/Caddyfile \
               -v caddy_data:/data \
               -v caddy_config:/config \
               caddy:latest
 
-          EOF # End of the SSH command's here document
+          EOF
