@@ -21,7 +21,7 @@ COPY package*.json ./
 
 # Install dependencies
 # Using npm ci for reproducible builds. Remove --force.
-RUN npm ci
+RUN npm ci --force
 
 # Copy the rest of the application code
 COPY . .
