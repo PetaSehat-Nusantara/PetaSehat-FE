@@ -3,27 +3,26 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
-import {
-    Form
-} from '@/components/ui/form';
+import { Form } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from '@/components/ui/select';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
-    Autocomplete,
-    GoogleMap,
-    InfoWindow,
-    LoadScript,
-    Marker,
+  Autocomplete,
+  GoogleMap,
+  InfoWindow,
+  LoadScript,
+  Marker,
+  useJsApiLoader,
 } from '@react-google-maps/api';
 import { MapPin } from 'lucide-react';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Resolver, useForm } from 'react-hook-form';
 import * as z from 'zod';
 
@@ -119,7 +118,16 @@ const jakartaDistricts = [
   { value: 'senayan', label: 'Senayan' },
 ];
 
-const LokasiLahan: React.FC = () => {
+interface LokasiLahanProps {
+  initialData?: Partial<SearchFormValues>;
+  onSubmit: (data: SearchFormValues) => void;
+  onPrev: () => void;
+}
+
+const LokasiLahan: React.FC<LokasiLahanProps> = ({
+  initialData = {},
+  onSubmit,
+}) => {
   const [selectedMarker, setSelectedMarker] = useState<PropertyMarker | null>(
     null
   );
@@ -244,11 +252,6 @@ const LokasiLahan: React.FC = () => {
     }
   };
 
-  const onSubmit = (data: SearchFormValues) => {
-    console.log('Search submitted:', data);
-    // Handle search logic here
-  };
-
   const handleCheckboxChange = (
     field: keyof Pick<
       SearchFormValues,
@@ -266,6 +269,22 @@ const LokasiLahan: React.FC = () => {
       : currentValues.filter((item) => item !== value);
     form.setValue(field, newValues);
   };
+  useEffect(() => {
+    if (initialData) {
+      form.reset(initialData);
+    }
+  }, [initialData, form.reset]);
+
+  const handleSubmit = (data: SearchFormValues) => {
+    onSubmit(data);
+  };
+
+  const { isLoaded } = useJsApiLoader({
+    id: 'google-map-script',
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
+    libraries: libraries,
+    language: 'id',
+  });
 
   return (
     <div className="w-full max-w-7xl mx-auto p-4 space-y-4 rounded-lg shadow-md bg-[#fff]">
@@ -280,17 +299,7 @@ const LokasiLahan: React.FC = () => {
         <CardContent className="p-0">
           <div className="relative">
             <div className="h-80 w-full overflow-hidden">
-              <LoadScript
-                googleMapsApiKey={
-                  process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''
-                }
-                libraries={libraries}
-                loadingElement={
-                  <div className="w-full h-full flex items-center justify-center bg-gray-100">
-                    <div className="text-gray-500">Loading map...</div>
-                  </div>
-                }
-              >
+              {isLoaded && (
                 <GoogleMap
                   mapContainerStyle={{ width: '100%', height: '100%' }}
                   center={mapCenter}
@@ -341,7 +350,7 @@ const LokasiLahan: React.FC = () => {
                     </InfoWindow>
                   )}
                 </GoogleMap>
-              </LoadScript>
+              )}
             </div>
 
             {/* Map Controls Overlay */}
@@ -393,28 +402,6 @@ const LokasiLahan: React.FC = () => {
                     ))}
                   </SelectContent>
                 </Select>
-
-                {/* Search Input with Autocomplete */}
-                <LoadScript
-                  googleMapsApiKey={
-                    process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''
-                  }
-                  libraries={libraries}
-                >
-                  <Autocomplete
-                    onLoad={onAutocompleteLoad}
-                    onPlaceChanged={onPlaceChanged}
-                    options={{
-                      componentRestrictions: { country: 'id' },
-                      types: ['geocode'],
-                    }}
-                  >
-                    <Input
-                      placeholder="Search specific location..."
-                      className="h-9 text-sm bg-[#fff]"
-                    />
-                  </Autocomplete>
-                </LoadScript>
               </div>
             </div>
 
@@ -442,7 +429,7 @@ const LokasiLahan: React.FC = () => {
 
       {/* Preferences Form */}
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Area Preferences */}
             <div className="space-y-3">

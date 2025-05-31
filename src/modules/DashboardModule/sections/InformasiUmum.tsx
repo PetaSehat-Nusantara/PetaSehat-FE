@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -22,21 +22,31 @@ import {
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 
-const formSchema = z.object({
-  facilityName: z.string().min(2),
-  facilityType: z.enum([
-    'Rumah Sakit Umum',
-    'Rumah Sakit Khusus',
-    'Puskesmas',
-    'Klinik',
-  ]),
-  facilityClass: z.enum(['Tipe A', 'Tipe B', 'Tipe C', 'Tipe D']),
-  minCapacity: z.coerce.number().min(0),
-  maxCapacity: z.coerce.number().min(0),
-  services: z.array(z.string()).optional(),
-});
+const formSchema = z
+  .object({
+    facilityName: z.string().min(2, 'Nama fasilitas minimal 2 karakter'),
+    facilityType: z.enum([
+      'Rumah Sakit Umum',
+      'Rumah Sakit Khusus',
+      'Puskesmas',
+      'Klinik',
+    ]),
+    facilityClass: z.enum(['Tipe A', 'Tipe B', 'Tipe C', 'Tipe D']),
+    minCapacity: z.coerce.number().min(0, 'Kapasitas tidak boleh negatif'),
+    maxCapacity: z.coerce.number().min(0, 'Kapasitas tidak boleh negatif'),
+    services: z.array(z.string()).optional(),
+  })
+  .refine((data) => data.maxCapacity >= data.minCapacity, {
+    message: 'Kapasitas maksimum harus lebih besar atau sama dengan minimum',
+    path: ['maxCapacity'],
+  });
 
 type FormSchema = z.infer<typeof formSchema>;
+
+interface InformasiUmumProps {
+  initialData?: Partial<FormSchema>;
+  onSubmit: (data: FormSchema) => void;
+}
 
 const serviceOptions = [
   'IGD 24 Jam',
@@ -46,7 +56,10 @@ const serviceOptions = [
   'Lainnya',
 ];
 
-const InformasiUmum = () => {
+const InformasiUmum: React.FC<InformasiUmumProps> = ({
+  initialData = {},
+  onSubmit,
+}) => {
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -56,22 +69,42 @@ const InformasiUmum = () => {
       minCapacity: 100,
       maxCapacity: 200,
       services: [],
+      ...initialData, // Merge with saved data
     },
   });
 
-  const onSubmit = (data: FormSchema) => {
-    console.log(data);
+  // Update form when initialData changes (when user navigates back)
+  useEffect(() => {
+    if (Object.keys(initialData).length > 0) {
+      form.reset({
+        facilityName: '',
+        facilityType: 'Rumah Sakit Umum',
+        facilityClass: 'Tipe A',
+        minCapacity: 100,
+        maxCapacity: 200,
+        services: [],
+        ...initialData,
+      });
+    }
+  }, [initialData, form]);
+
+  const handleSubmit = (data: FormSchema) => {
+    onSubmit(data);
   };
 
   return (
     <div className="flex bg-white rounded-lg shadow-sm">
       <div className="flex-1 p-6">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form
+            onSubmit={form.handleSubmit(handleSubmit)}
+            className="space-y-6"
+          >
             <div>
-              <h2 className="text-lg font-semibold text-gray-800 mb-4">
+              <h2 className="text-lg font-semibold text-gray-800 mb-1">
                 Informasi Umum
               </h2>
+              <div className="w-full h-[1px] bg-slate-300 mb-6" />
 
               <FormField
                 control={form.control}
@@ -96,7 +129,7 @@ const InformasiUmum = () => {
                       <FormLabel>Tipe Faskes</FormLabel>
                       <Select
                         onValueChange={field.onChange}
-                        defaultValue={field.value}
+                        value={field.value}
                       >
                         <FormControl>
                           <SelectTrigger>
@@ -126,7 +159,7 @@ const InformasiUmum = () => {
                       <FormLabel>Kelas Faskes</FormLabel>
                       <Select
                         onValueChange={field.onChange}
-                        defaultValue={field.value}
+                        value={field.value}
                       >
                         <FormControl>
                           <SelectTrigger>
@@ -216,7 +249,9 @@ const InformasiUmum = () => {
               />
             </div>
 
-            <Button type="submit">Selanjutnya</Button>
+            <Button type="submit" className="w-full">
+              Selanjutnya
+            </Button>
           </form>
         </Form>
       </div>
