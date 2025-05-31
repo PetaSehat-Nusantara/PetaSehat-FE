@@ -29,7 +29,7 @@ ENV PINECONE_INDEX_NAME=$PINECONE_INDEX_NAME
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci
+RUN npm ci --force
 
 COPY . .
 
