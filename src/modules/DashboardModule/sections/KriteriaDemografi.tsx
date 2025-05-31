@@ -61,7 +61,7 @@ const KriteriaDemografi: React.FC<KriteriaDemografiProps> = ({ initialData, onSu
     if (initialData) {
       form.reset(initialData);
     }
-  }, [initialData, form.reset]);
+  }, [initialData, form.reset, form]);
 
   const handleActualFormSubmit = (data: FormSchema) => {
     onParentSubmit(data);

@@ -10,17 +10,17 @@ export interface InformasiUmumData {
 
 export interface KriteriaDemografiData {
   // Define based on your KriteriaDemografi form fields
-  [key: string]: any;
+  [key: string]: never;
 }
 
 export interface LokasiLahanData {
   // Define based on your LokasiLahan form fields
-  [key: string]: any;
+  [key: string]: never;
 }
 
 export interface KriteriaKeuanganData {
   // Define based on your KriteriaKeuangan form fields
-  [key: string]: any;
+  [key: string]: never;
 }
 
 export interface FormData {
@@ -28,13 +28,4 @@ export interface FormData {
   kriteriaDemografi: KriteriaDemografiData;
   lokasiLahan: LokasiLahanData;
   kriteriaKeuangan: KriteriaKeuanganData;
-}
-
-// Props for step components
-export interface StepComponentProps {
-  data: any;
-  onDataChange: (data: any) => void;
-  onNext: () => void;
-  onPrev?: () => void;
-  allData?: FormData;
 }

@@ -250,7 +250,7 @@ const LokasiLahan: React.FC<LokasiLahanProps> = ({
     if (initialData) {
       form.reset(initialData);
     }
-  }, [initialData, form.reset]);
+  }, [initialData, form.reset, form]);
 
   const handleSubmit = (data: SearchFormValues) => {
     onSubmit(data);

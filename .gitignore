@@ -61,3 +61,4 @@ functions/.env*
 functions/*.log
 
 dont_push/
+local-data/

@@ -109,7 +109,7 @@ const KriteriaKeuangan: React.FC<KriteriaKeuanganProps> = ({
     if (allData) {
       console.log("All form data available in KriteriaKeuangan:", allData);
     }
-  }, [initialData, form.reset]); // allData can be added if its change should trigger a reset or other logic
+  }, [initialData, form.reset, form, allData]); // allData can be added if its change should trigger a reset or other logic
 
   const handleActualFormSubmit = (data: FormSchemaType) => {
     onParentSubmit(data);

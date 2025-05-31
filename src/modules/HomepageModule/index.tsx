@@ -5,7 +5,6 @@ import { useState, useEffect, useRef } from "react"
 import {
   ArrowRight,
   Brain,
-  Play,
   Search,
   BarChart3,
   CheckCircle,
@@ -156,16 +155,16 @@ const HomePageModule = () => {
                   </p>
                 </div>
 
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <Button size="lg" className="bg-green-600 hover:bg-green-700 text-white">
-                    <span>Mulai Eksplorasi</span>
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
-                  <Button size="lg" variant="outline" className="border-green-200 hover:bg-green-50">
-                    <Play className="mr-2 h-5 w-5" />
-                    <span>Lihat Demo</span>
-                  </Button>
-                </div>
+                {/*<div className="flex flex-col sm:flex-row gap-4">*/}
+                {/*  <Button size="lg" className="bg-green-600 hover:bg-green-700 text-white">*/}
+                {/*    <span>Mulai Eksplorasi</span>*/}
+                {/*    <ArrowRight className="ml-2 h-5 w-5" />*/}
+                {/*  </Button>*/}
+                {/*  <Button size="lg" variant="outline" className="border-green-200 hover:bg-green-50">*/}
+                {/*    <Play className="mr-2 h-5 w-5" />*/}
+                {/*    <span>Lihat Demo</span>*/}
+                {/*  </Button>*/}
+                {/*</div>*/}
 
                 <div className="grid grid-cols-3 gap-6 pt-8">
                   {[
