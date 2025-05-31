@@ -1,11 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useState } from 'react';
-import SideNusaInfo from '../NusaInfoModule/sections/SideNusaInfo';
-import ProgressBar from './module-elements/ProgressBar';
-import InformasiUmum from './sections/InformasiUmum';
-import KriteriaDemografi from './sections/KriteriaDemografi';
-import KriteriaKeuangan from './sections/KriteriaKeuangan';
-import LokasiLahan from './sections/LokasiLahan';
 import {
   FormData,
   InformasiUmumData,
@@ -13,7 +9,11 @@ import {
   KriteriaKeuanganData,
   LokasiLahanData,
 } from './interface';
-import { Skeleton } from '@/components/ui/skeleton';
+import ProgressBar from './module-elements/ProgressBar';
+import InformasiUmum from './sections/InformasiUmum';
+import KriteriaDemografi from './sections/KriteriaDemografi';
+import KriteriaKeuangan from './sections/KriteriaKeuangan';
+import LokasiLahan from './sections/LokasiLahan';
 
 export default function DashboardModule() {
   const [currentProgressIdx, setCurrentProgressIdx] = useState<number>(1);
@@ -67,6 +67,7 @@ export default function DashboardModule() {
     } else {
       setIsLoading(true);
       // Simulate loading/thinking process
+      console.log(formData)
       setTimeout(() => {
         setIsLoading(false);
         // Here you would navigate to the result page or show the result
@@ -76,11 +77,11 @@ export default function DashboardModule() {
 
   // Render current step component
   const renderCurrentStep = () => {
-    const commonProps = {
-      onNext: nextStep,
-      onPrev: currentProgressIdx > 1 ? prevStep : undefined,
-      onSubmit: handleStepSubmit,
-    };
+    // const commonProps = {
+    //   onNext: nextStep,
+    //   onPrev: currentProgressIdx > 1 ? prevStep : undefined,
+    //   onSubmit: handleStepSubmit,
+    // };
 
     switch (currentProgressIdx) {
       case 1:
@@ -158,7 +159,7 @@ export default function DashboardModule() {
 
   return (
     <div className="bg-gray-50 p-4 flex gap-4">
-      <div className="w-fit">
+      <div className="mx-auto w-full">
         <div className="py-6 w-full flex flex-col gap-2">
           <h1 className="text-4xl font-bold primary-gradient-text">
             Fasilitas Kesehatan Baru

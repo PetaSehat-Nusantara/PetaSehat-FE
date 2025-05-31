@@ -1,9 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 import SideNusaInfo from '@/modules/NusaInfoModule/sections/SideNusaInfo';
 import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
 import { useCallback, useMemo, useState } from 'react';
 
-type Props = {};
 const libraries: Array<'places' | 'geometry'> = ['places', 'geometry'];
 interface PropertyMarker {
   id: string;
@@ -14,8 +14,7 @@ interface PropertyMarker {
   size: string;
   description: string;
 }
-
-export const Rangkuman = ({}: Props) => {
+export const Rangkuman = () => {
   const [selectedMarker, setSelectedMarker] = useState<PropertyMarker | null>(
     null
   );

@@ -1,10 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Form } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
@@ -14,12 +14,10 @@ import {
 } from '@/components/ui/select';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
-  Autocomplete,
   GoogleMap,
   InfoWindow,
-  LoadScript,
   Marker,
-  useJsApiLoader,
+  useJsApiLoader
 } from '@react-google-maps/api';
 import { MapPin } from 'lucide-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -134,9 +132,7 @@ const LokasiLahan: React.FC<LokasiLahanProps> = ({
   );
   const [mapCenter, setMapCenter] = useState({ lat: -6.2088, lng: 106.8456 });
   const [mapZoom, setMapZoom] = useState(11);
-  const [autocomplete, setAutocomplete] =
-    useState<google.maps.places.Autocomplete | null>(null);
-
+  
   const form = useForm<SearchFormValues>({
     resolver: zodResolver(searchFormSchema) as Resolver<SearchFormValues>,
     defaultValues: {
@@ -232,26 +228,6 @@ const LokasiLahan: React.FC<LokasiLahanProps> = ({
   const onLoad = useCallback((map: google.maps.Map) => {
     // Map loaded successfully
   }, []);
-
-  const onAutocompleteLoad = (
-    autocompleteInstance: google.maps.places.Autocomplete
-  ) => {
-    setAutocomplete(autocompleteInstance);
-  };
-
-  const onPlaceChanged = () => {
-    if (autocomplete !== null) {
-      const place = autocomplete.getPlace();
-      if (place.geometry?.location) {
-        const newCenter = {
-          lat: place.geometry.location.lat(),
-          lng: place.geometry.location.lng(),
-        };
-        setMapCenter(newCenter);
-        setMapZoom(15);
-      }
-    }
-  };
 
   const handleCheckboxChange = (
     field: keyof Pick<
